@@ -1,6 +1,6 @@
 <?php
-$file = "/var/www/vhosts/buutvrij.nl/getij.buutvrij.nl/tideData.json";
-$logFile = "/var/www/vhosts/buutvrij.nl/getij.buutvrij.nl/update.log";
+$file = "/var/www/vhosts/buutvrij.nl/getij.buutvrij.nl/data/tideData.json";
+$logFile = "/var/www/vhosts/buutvrij.nl/getij.buutvrij.nl/data/update.log";
 $url = "https://rws-proxy.onrender.com/api/getijden";
 
 $body = [

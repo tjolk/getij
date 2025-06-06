@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Getij Scheveningen</title>
-    <link rel="stylesheet" href="styles.css">
-	<link rel="icon" href="/favicon.ico" type="image/x-icon">
-	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-	<link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="icons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/android-chrome-512x512.png">
+    <link rel="manifest" href="site.webmanifest">
 </head>
 <body>
     <h1>Getijdeninformatie voor Scheveningen</h1>
@@ -35,14 +37,16 @@
             <th>Waterhoogte</th>
         </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+        <!-- Dynamically filled by JS -->
+    </tbody>
 </table>
 <br>
 <table>
     <thead>
         <tr>
             <th>Datum</th>
-			<th>Tijd</th>
+            <th>Tijd</th>
             <th>Getijde</th>
             <th>Hoogte</th>
         </tr>
@@ -50,8 +54,8 @@
     <tbody id="tides-table">
     </tbody>
 </table>
-	</div>
-<img src="waarschuwingsvlaggen.png" alt="Waarschuwingsvlaggen op het strand" class="afbeelding">
-	<script src="script.js"></script>
+    </div>
+<img src="images/waarschuwingsvlaggen.png" alt="Waarschuwingsvlaggen op het strand" class="afbeelding">
+    <script src="js/script.js"></script>
 </body>
 </html>

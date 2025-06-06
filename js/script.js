@@ -1,5 +1,5 @@
 async function getTideData() {
-    const jsonUrl = "/tideData.json"; // Verwijzing naar lokaal JSON-bestand
+    const jsonUrl = "/data/tideData.json"; // Verwijzing naar lokaal JSON-bestand
 
     try {
         const response = await fetch(jsonUrl);
