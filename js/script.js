@@ -21,12 +21,20 @@ function formatDateTime(isoString) {
 
     const tijd = date.toLocaleTimeString('nl-NL', tijdOpties);
     const uur = date.getHours();
-    const icoon = (uur >= 6 && uur < 18) ? "☀️" : "🌙";
 
     return {
         datum: date.toLocaleDateString('nl-NL', datumOpties).replace(",", " -"),
         tijd: `${tijd}`
     };
+}
+
+function appendTideCards(metingen, container, colorMap) {
+    metingen.forEach(meting => {
+        const card = document.createElement("div");
+        card.className = `tide-card ${colorMap[meting.kleur]}`;
+        card.innerHTML = `<p class="tijd">${meting.tijd}</p> <p>${meting.hoogte}</p>`;
+        container.appendChild(card);
+    });
 }
 
 function displayTides(data) {
@@ -53,8 +61,15 @@ function displayTides(data) {
     let metingenVandaag = [];
     let metingenMorgen = [];
 
-    const vandaag = new Date().toISOString().split("T")[0]; // YYYY-MM-DD formaat
-    const morgen = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0]; // Morgen
+    const vandaagDate = new Date();
+    const morgenDate = new Date();
+    morgenDate.setDate(vandaagDate.getDate() + 1);
+
+    function isSameDay(d1, d2) {
+        return d1.getFullYear() === d2.getFullYear() &&
+               d1.getMonth() === d2.getMonth() &&
+               d1.getDate() === d2.getDate();
+    }
 
     data.WaarnemingenLijst.forEach(waarneming => {
         waarneming.MetingenLijst.forEach(meting => {
@@ -62,10 +77,11 @@ function displayTides(data) {
                 const waardeNum = meting.Meetwaarde.Waarde_Numeriek;
                 const pijlHTML = waardeNum >= 0 ? "▲" : "▼";
                 const tijdInfo = formatDateTime(meting.Tijdstip);
+                const metingDate = new Date(meting.Tijdstip);
 
-                if (new Date(meting.Tijdstip).toISOString().split("T")[0] === vandaag) {
+                if (isSameDay(metingDate, vandaagDate)) {
                     metingenVandaag.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue" });
-                } else if (new Date(meting.Tijdstip).toISOString().split("T")[0] === morgen) {
+                } else if (isSameDay(metingDate, morgenDate)) {
                     metingenMorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue" });
                 }
             }
@@ -75,19 +91,8 @@ function displayTides(data) {
     metingenVandaag.sort((a, b) => new Date(`1970-01-01 ${a.tijd}`) - new Date(`1970-01-01 ${b.tijd}`));
     metingenMorgen.sort((a, b) => new Date(`1970-01-01 ${a.tijd}`) - new Date(`1970-01-01 ${b.tijd}`));
 
-    metingenVandaag.forEach(meting => {
-        const card = document.createElement("div");
-        card.className = `tide-card ${meting.kleur === 'darkblue' ? 'darkblue' : 'lightblue'}`;
-        card.innerHTML = `<p class="tijd">${meting.tijd}</p> <p>${meting.hoogte}</p>`;
-        cardContainer.appendChild(card);
-    });
-
-	metingenMorgen.forEach(meting => {
-		const card = document.createElement("div");
-		card.className = `tide-card ${meting.kleur === 'darkblue' ? 'gray-dark' : 'gray-light'}`;
-		card.innerHTML = `<p class="tijd">${meting.tijd}</p> <p>${meting.hoogte}</p>`;
-		tomorrowContainer.appendChild(card);
-	});
+    appendTideCards(metingenVandaag, cardContainer, { darkblue: 'darkblue', lightblue: 'lightblue' });
+    appendTideCards(metingenMorgen, tomorrowContainer, { darkblue: 'gray-dark', lightblue: 'gray-light' });
 }
 
 document.addEventListener("DOMContentLoaded", getTideData);

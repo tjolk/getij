@@ -37,7 +37,8 @@ if ($response) {
     logMessage("✅ Data succesvol opgeslagen.");
     echo "✅ Data succesvol opgeslagen!";
 } else {
-    logMessage("❌ Fout bij ophalen van getijdendata.");
+    $error = error_get_last();
+    logMessage("❌ Fout bij ophalen van getijdendata: " . ($error['message'] ?? 'Onbekende fout'));
     echo "⚠️ Fout bij het ophalen van getijdendata.";
 }
 ?>

@@ -12,7 +12,7 @@ table {
 th, td {
     padding: 10px;
     text-align: left;
-    white-space: nowrap; /* Voorkomt afbreken van tekst */
+    white-space: nowrap;
     overflow: hidden;
 /*     text-overflow: ellipsis; /* Voegt "..." toe als de tekst te lang is */
 }
@@ -47,7 +47,6 @@ th {
 
 /* Zorg dat de afbeelding zich automatisch aanpast */
 .afbeelding {
-/*    max-width: 300px;*/
     height: auto;
 }
 
@@ -61,6 +60,7 @@ th {
     max-width: 450px;
     margin: auto;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    flex: 1; /* Zorgt dat beide kaarten gelijke ruimte krijgen */
 }
 
 .day-card h3 {
@@ -71,9 +71,8 @@ th {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 20px;
     justify-items: center;
 }
 
@@ -125,12 +124,6 @@ th {
     gap: 20px; /* Ruimte tussen de kaarten */
 }
 
-.day-card {
-    flex: 1; /* Zorgt dat beide kaarten gelijke ruimte krijgen */
-    max-width: 450px; /* Voorkomt dat ze te groot worden */
-}
-
-
 /* Zorg ervoor dat beide kaarten goed passen op mobiel */
 @media screen and (max-width: 768px) {
     .tides-container {
@@ -143,7 +136,8 @@ th {
     }
 
     .grid-container {
-        gap: 10px;
+        grid-template-columns: 1fr;
+        gap: 15px;
     }
 
     .tide-card {
