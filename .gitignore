@@ -1,0 +1,23 @@
+# Ignore sensitive config
+config.php
+
+# Ignore data files that may contain generated or sensitive data
+data/*.json
+data/*.log
+
+# Ignore OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Ignore node_modules and vendor (if ever used)
+node_modules/
+vendor/
+
+# Ignore log files
+*.log
+
+# Ignore environment files
+.env
+.env.*
