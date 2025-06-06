@@ -1,5 +1,5 @@
 # Ignore sensitive config
-config.php
+config_getij.php
 
 # Ignore data files that may contain generated or sensitive data
 data/*.json

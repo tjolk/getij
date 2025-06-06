@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../../config_getij.php';
 
 $file = BASE_PATH . '/data/tideData.json';
 $logFile = BASE_PATH . '/data/update.log';
