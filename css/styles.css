@@ -1,0 +1,162 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Voorkomt afbreken en zorgt voor nette kolommen */
+    word-wrap: break-word;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap; /* Voorkomt afbreken van tekst */
+    overflow: hidden;
+/*     text-overflow: ellipsis; /* Voegt "..." toe als de tekst te lang is */
+}
+th {
+	background-color: #f4f4f4;
+}
+.pijl {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.omhoog {
+    color: blue; /* Blauwe pijl omhoog */
+}
+
+.omlaag {
+    color: red; /* Rode pijl omlaag */
+}
+.pijl.omhoog {
+    color: blue !important;
+}
+
+.pijl.omlaag {
+    color: red !important;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Ruimte tussen tabel en afbeelding */
+}
+
+/* Zorg dat de afbeelding zich automatisch aanpast */
+.afbeelding {
+/*    max-width: 300px;*/
+    height: auto;
+}
+
+.day-card {
+    background-color: #005f9e;
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+    margin: auto;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+.day-card h3 {
+    font-size: 24px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 15px;
+    justify-items: center;
+}
+
+.tide-card {
+    width: 100%;
+    max-width: 180px;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 18px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+}
+
+.tide-card.darkblue { background-color: darkblue; color: white; }
+.tide-card.lightblue { background-color: lightblue; color: black; }
+
+.tijd {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.tomorrow-card {
+    background-color: #666; /* Grijstint */
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+    margin: auto;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+.tomorrow-card h3 {
+    font-size: 24px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    color: #f0f0f0; /* Lichtere tekstkleur */
+}
+
+.tide-card.gray-dark { background-color: #555; color: white; }
+.tide-card.gray-light { background-color: #bbb; color: black; }
+
+.tides-container {
+    display: flex;
+    flex-wrap: wrap; /* Laat de kaarten verspringen als er te weinig ruimte is */
+    justify-content: center; /* Zorgt voor nette uitlijning */
+    gap: 20px; /* Ruimte tussen de kaarten */
+}
+
+.day-card {
+    flex: 1; /* Zorgt dat beide kaarten gelijke ruimte krijgen */
+    max-width: 450px; /* Voorkomt dat ze te groot worden */
+}
+
+
+/* Zorg ervoor dat beide kaarten goed passen op mobiel */
+@media screen and (max-width: 768px) {
+    .tides-container {
+        flex-direction: column; /* Zet de kaarten onder elkaar */
+        align-items: center; /* Zorg dat ze gecentreerd blijven */
+    }
+    .day-card {
+        max-width: 90%;
+        padding: 15px;
+    }
+
+    .grid-container {
+        gap: 10px;
+    }
+
+    .tide-card {
+        max-width: 140px;
+        font-size: 16px;
+    }
+
+    .container {
+        flex-direction: column; /* Zet afbeelding onder de tabel */
+        align-items: flex-start;
+    }
+
+    .afbeelding {
+        max-width: 100%; /* Volledige breedte op kleinere schermen */
+    }
+}
