@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getij Scheveningen</title>
+    <link rel="stylesheet" href="styles.css">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+    <h1>Getijdeninformatie voor Scheveningen</h1>
+<br>
+<h2>Getijden</h2>
+<div class="tides-container">
+    <div id="tides-day-card" class="day-card">
+        <h3 id="day-title">Getijden van vandaag</h3>
+        <div id="tides-card-container" class="grid-container"></div>
+    </div>
+
+    <div id="tides-tomorrow-card" class="day-card tomorrow-card">
+        <h3 id="tomorrow-title">Getijden van morgen</h3>
+        <div id="tides-tomorrow-container" class="grid-container"></div>
+    </div>
+</div>
+<br>	
+<h2>Getijden vandaag</h2>
+<div class="getijden-container">
+<table id="daily-tides">
+    <thead>
+        <tr>
+            <th>Getij</th>
+            <th>Tijd</th>
+            <th>Waterhoogte</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<br>
+<table>
+    <thead>
+        <tr>
+            <th>Datum</th>
+			<th>Tijd</th>
+            <th>Getijde</th>
+            <th>Hoogte</th>
+        </tr>
+    </thead>
+    <tbody id="tides-table">
+    </tbody>
+</table>
+	</div>
+<img src="waarschuwingsvlaggen.png" alt="Waarschuwingsvlaggen op het strand" class="afbeelding">
+	<script src="script.js"></script>
+</body>
+</html>
