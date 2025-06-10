@@ -14,31 +14,17 @@
     }
   },
   {
-    "name": "vlissingenVoorbeeldData",
+    "name": "wathteScheData",
     "endpoint": "https://rws-proxy.onrender.com/api/ONLINEWAARNEMINGENSERVICES_DBO/OphalenWaarnemingen",
     "begindatum": { "format": "Y-m-d\\TH:i:s.000+01:00", "relative": "-2 days 00:00" },
     "einddatum": { "format": "Y-m-d\\TH:i:s.000+01:00", "relative": "+2 days 12:00" },
-    "body": {
-      "Locatie": {"Code": "VLISSGN", "X": 541425.983214885, "Y": 5699181.90968435},
-      "AquoPlusWaarnemingMetadata": {"AquoMetadata": {"Groepering": {"Code": "GETETBRKD2"}}},
+    "body": {"Locatie":{"Code": "SCHE", "X": 586551.020314752, "Y": 5772806.49292637},
+ "AquoPlusWaarnemingMetadata":{
+   "AquoMetadata":{"Compartiment":{"Code":"OW"}, "Grootheid":{"Code":"WATHTE"}}},
       "Periode": {
         "Begindatumtijd": "{BEGINDATUM}",
         "Einddatumtijd": "{EINDDATUM}"
       }
     }
-  },
-  {
-    "name": "laatsteTpHSchevKijkdData",
-    "endpoint": "https://rws-proxy.onrender.com/api/ONLINEWAARNEMINGENSERVICES_DBO/OphalenLaatsteWaarnemingen",
-    "body": {"LocatieLijst":[
-     {"Code":"KIJKDBSD", "X":583527.910093743, "Y":5769620.14000297},
-     {"Code":"SCHEVNGNZD", "X":585425.305111365, "Y":5771966.17664545},
-     {"Code":"SCHEVNGVTRBS", "X":586663.075816177, "Y":5773960.44620737},
-     {"Code":"SCHEVNGBSD", "X":587196.072574656, "Y":5774178.03767033},
-     {"Code":"SCHEVNGZTPBS", "X":588553.872578174, "Y":5775473.07089743}],
-     "AquoPlusWaarnemingMetadataLijst":[
-     {"AquoMetadata":{"Compartiment":{"Code":"OW"}, "Grootheid":{"Code":"T"}}},
-     {"AquoMetadata":{"Compartiment":{"Code":"OW"},"Grootheid":{"Code":"pH"}}}
-     ]}
   }
 ]
