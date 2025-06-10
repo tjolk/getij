@@ -18,6 +18,11 @@ function logMessage($message) {
 // Load config
 $configJson = file_get_contents($configFile);
 $endpoints = json_decode($configJson, true);
+if (!is_array($endpoints)) {
+    logMessage("❌ Configuratiebestand update_config.json is ongeldig of bevat een JSON-fout.");
+    echo "⚠️ Configuratiebestand update_config.json is ongeldig of bevat een JSON-fout.<br>";
+    exit(1);
+}
 
 // Date placeholders
 $begindatum = date("Y-m-d\TH:i:s.000+01:00", strtotime("-1 day 18:00"));
