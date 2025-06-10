@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../config_getij.php';
 
 $file = BASE_PATH . '/data/tideData.json';
 $logFile = BASE_PATH . '/data/update.log';
-$url = "https://rws-proxy.onrender.com/api/getijden";
+$url = "https://rws-proxy.onrender.com/api/ONLINEWAARNEMINGENSERVICES_DBO/OphalenWaarnemingen";
 
 $body = [
     "Locatie" => ["Code" => "SCHEVNGN", "X" => 586550.994420996, "Y" => 5772806.43069697],
