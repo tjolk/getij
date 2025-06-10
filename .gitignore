@@ -1,0 +1,8 @@
+# Ignore all files in the data directory
+/data/*
+
+# But do not ignore the log file if you want to keep it tracked (uncomment if needed)
+#!/data/update.log
+
+# If you want to keep the directory itself
+!.gitkeep

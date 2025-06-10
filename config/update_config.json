@@ -1,0 +1,30 @@
+[
+  {
+    "name": "tideData",
+    "endpoint": "https://rws-proxy.onrender.com/api/ONLINEWAARNEMINGENSERVICES_DBO/OphalenWaarnemingen",
+    "begindatum": { "format": "Y-m-d\\TH:i:s.000+01:00", "relative": "-1 day 18:00" },
+    "einddatum": { "format": "Y-m-d\\TH:i:s.000+01:00", "relative": "+4 days 00:00" },
+    "body": {
+      "Locatie": {"Code": "SCHEVNGN", "X": 586550.994420996, "Y": 5772806.43069697},
+      "AquoPlusWaarnemingMetadata": {"AquoMetadata": {"Groepering": {"Code": "GETETBRKD2"}}},
+      "Periode": {
+        "Begindatumtijd": "{BEGINDATUM}",
+        "Einddatumtijd": "{EINDDATUM}"
+      }
+    }
+  },
+  {
+    "name": "vlissingenVoorbeeldData",
+    "endpoint": "https://rws-proxy.onrender.com/api/ONLINEWAARNEMINGENSERVICES_DBO/OphalenWaarnemingen",
+    "begindatum": { "format": "Y-m-d\\TH:i:s.000+01:00", "relative": "-2 days 00:00" },
+    "einddatum": { "format": "Y-m-d\\TH:i:s.000+01:00", "relative": "+2 days 12:00" },
+    "body": {
+      "Locatie": {"Code": "VLISSGN", "X": 541425.983214885, "Y": 5699181.90968435},
+      "AquoPlusWaarnemingMetadata": {"AquoMetadata": {"Groepering": {"Code": "GETETBRKD2"}}},
+      "Periode": {
+        "Begindatumtijd": "{BEGINDATUM}",
+        "Einddatumtijd": "{EINDDATUM}"
+      }
+    }
+  }
+]

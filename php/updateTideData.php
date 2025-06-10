@@ -6,7 +6,7 @@ if (!defined('BASE_PATH')) {
 }
 
 $logFile = BASE_PATH . '/data/update.log';
-$configFile = __DIR__ . '/update_config.json';
+$configFile = BASE_PATH . '/config/update_config.json';
 
 // **Logfunctie**
 function logMessage($message) {
@@ -25,10 +25,15 @@ if (!is_array($endpoints)) {
 }
 
 // Date placeholders
-$begindatum = date("Y-m-d\TH:i:s.000+01:00", strtotime("-1 day 18:00"));
-$einddatum = date("Y-m-d\TH:i:s.000+01:00", strtotime("+4 days 00:00"));
-
 foreach ($endpoints as $endpoint) {
+    // Use custom date range if present, else default
+    $begindatum = isset($endpoint['begindatum'])
+        ? date($endpoint['begindatum']['format'], strtotime($endpoint['begindatum']['relative']))
+        : date("Y-m-d\TH:i:s.000+01:00", strtotime("-1 day 18:00"));
+    $einddatum = isset($endpoint['einddatum'])
+        ? date($endpoint['einddatum']['format'], strtotime($endpoint['einddatum']['relative']))
+        : date("Y-m-d\TH:i:s.000+01:00", strtotime("+4 days 00:00"));
+
     $url = $endpoint['endpoint'];
     $file = BASE_PATH . '/data/' . $endpoint['name'] . '.json';
     $body = json_encode($endpoint['body']);
