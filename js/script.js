@@ -60,10 +60,13 @@ function displayTides(data) {
 
     let metingenVandaag = [];
     let metingenMorgen = [];
+    let metingenOvermorgen = [];
 
     const vandaagDate = new Date();
     const morgenDate = new Date();
     morgenDate.setDate(vandaagDate.getDate() + 1);
+    const overmorgenDate = new Date();
+    overmorgenDate.setDate(vandaagDate.getDate() + 2);
 
     function isSameDay(d1, d2) {
         return d1.getFullYear() === d2.getFullYear() &&
@@ -80,16 +83,28 @@ function displayTides(data) {
                 const metingDate = new Date(meting.Tijdstip);
 
                 if (isSameDay(metingDate, vandaagDate)) {
-                    metingenVandaag.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue" });
+                    metingenVandaag.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
                 } else if (isSameDay(metingDate, morgenDate)) {
-                    metingenMorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue" });
+                    metingenMorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
+                } else if (isSameDay(metingDate, overmorgenDate)) {
+                    metingenOvermorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
                 }
             }
         });
     });
 
-    metingenVandaag.sort((a, b) => new Date(`1970-01-01 ${a.tijd}`) - new Date(`1970-01-01 ${b.tijd}`));
-    metingenMorgen.sort((a, b) => new Date(`1970-01-01 ${a.tijd}`) - new Date(`1970-01-01 ${b.tijd}`));
+    metingenVandaag.sort((a, b) => new Date(a.tijdstip) - new Date(b.tijdstip));
+    metingenMorgen.sort((a, b) => new Date(a.tijdstip) - new Date(b.tijdstip));
+    metingenOvermorgen.sort((a, b) => new Date(a.tijdstip) - new Date(b.tijdstip));
+
+    // If only 3 tides today, add the first tide of tomorrow to today
+    if (metingenVandaag.length === 3 && metingenMorgen.length > 0) {
+        metingenVandaag.push(metingenMorgen[0]);
+    }
+    // If only 3 tides tomorrow, add the first tide of overmorgen to tomorrow
+    if (metingenMorgen.length === 3 && metingenOvermorgen.length > 0) {
+        metingenMorgen.push(metingenOvermorgen[0]);
+    }
 
     appendTideCards(metingenVandaag, cardContainer, { darkblue: 'darkblue', lightblue: 'lightblue' });
     appendTideCards(metingenMorgen, tomorrowContainer, { darkblue: 'gray-dark', lightblue: 'gray-light' });
