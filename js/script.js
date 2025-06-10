@@ -28,10 +28,23 @@ function formatDateTime(isoString) {
     };
 }
 
-function appendTideCards(metingen, container, colorMap) {
-    metingen.forEach(meting => {
+function appendTideCards(metingen, container, colorMap, highlightNextTide = false) {
+    // Find the next tide (first one in the future)
+    let nextTideIndex = -1;
+    if (highlightNextTide) {
+        const now = new Date();
+        for (let i = 0; i < metingen.length; i++) {
+            const tideTime = new Date(metingen[i].tijdstip);
+            if (tideTime > now) {
+                nextTideIndex = i;
+                break;
+            }
+        }
+    }
+    metingen.forEach((meting, idx) => {
         const card = document.createElement("div");
-        card.className = `tide-card ${colorMap[meting.kleur]}`;
+        let highlightClass = (highlightNextTide && idx === nextTideIndex) ? "next-tide" : "";
+        card.className = `tide-card ${colorMap[meting.kleur]} ${highlightClass}`;
         card.innerHTML = `<p class="tijd">${meting.tijd}</p> <p>${meting.hoogte}</p>`;
         container.appendChild(card);
     });
@@ -48,9 +61,17 @@ function displayTides(data) {
 
     dayCard.style.display = "block";
     tomorrowCard.style.display = "block";
-	tomorrowCard.classList.add("tomorrow-card");
-	cardContainer.innerHTML = "";
+    tomorrowCard.classList.add("tomorrow-card");
+    cardContainer.innerHTML = "";
     tomorrowContainer.innerHTML = "";
+
+    // Define today, tomorrow, and overmorgen dates for comparison
+    const vandaagDate = new Date();
+    vandaagDate.setHours(0,0,0,0);
+    const morgenDate = new Date(vandaagDate);
+    morgenDate.setDate(morgenDate.getDate() + 1);
+    const overmorgenDate = new Date(vandaagDate);
+    overmorgenDate.setDate(overmorgenDate.getDate() + 2);
 
     if (!data?.WaarnemingenLijst?.length) {
         dayTitle.innerText = "Geen getijdendata beschikbaar";
@@ -62,35 +83,31 @@ function displayTides(data) {
     let metingenMorgen = [];
     let metingenOvermorgen = [];
 
-    const vandaagDate = new Date();
-    const morgenDate = new Date();
-    morgenDate.setDate(vandaagDate.getDate() + 1);
-    const overmorgenDate = new Date();
-    overmorgenDate.setDate(vandaagDate.getDate() + 2);
+    // Set only the day titles with date, but without parentheses
+    if (dayTitle) dayTitle.textContent = `Vandaag ${vandaagDate.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}`;
+    if (tomorrowTitle) tomorrowTitle.textContent = `Morgen ${morgenDate.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}`;
 
-    function isSameDay(d1, d2) {
-        return d1.getFullYear() === d2.getFullYear() &&
-               d1.getMonth() === d2.getMonth() &&
-               d1.getDate() === d2.getDate();
-    }
+    // Use the first WaarnemingLijst that contains at least one MetingenLijst item with Waarde_Numeriek
+    const waarneming = data.WaarnemingenLijst && data.WaarnemingenLijst.find(w =>
+        w.MetingenLijst && w.MetingenLijst.some(m => typeof m.Meetwaarde.Waarde_Numeriek === "number")
+    );
+    if (!waarneming) return;
 
-    data.WaarnemingenLijst.forEach(waarneming => {
-        waarneming.MetingenLijst.forEach(meting => {
-            if (typeof meting.Meetwaarde.Waarde_Numeriek === "number") {
-                const waardeNum = meting.Meetwaarde.Waarde_Numeriek;
-                const pijlHTML = waardeNum >= 0 ? "▲" : "▼";
-                const tijdInfo = formatDateTime(meting.Tijdstip);
-                const metingDate = new Date(meting.Tijdstip);
+    waarneming.MetingenLijst.forEach(meting => {
+        if (typeof meting.Meetwaarde.Waarde_Numeriek === "number") {
+            const waardeNum = meting.Meetwaarde.Waarde_Numeriek;
+            const pijlHTML = waardeNum >= 0 ? "▲" : "▼";
+            const tijdInfo = formatDateTime(meting.Tijdstip);
+            const metingDate = new Date(meting.Tijdstip);
 
-                if (isSameDay(metingDate, vandaagDate)) {
-                    metingenVandaag.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
-                } else if (isSameDay(metingDate, morgenDate)) {
-                    metingenMorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
-                } else if (isSameDay(metingDate, overmorgenDate)) {
-                    metingenOvermorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
-                }
+            if (isSameDay(metingDate, vandaagDate)) {
+                metingenVandaag.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
+            } else if (isSameDay(metingDate, morgenDate)) {
+                metingenMorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
+            } else if (isSameDay(metingDate, overmorgenDate)) {
+                metingenOvermorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
             }
-        });
+        }
     });
 
     metingenVandaag.sort((a, b) => new Date(a.tijdstip) - new Date(b.tijdstip));
@@ -106,8 +123,15 @@ function displayTides(data) {
         metingenMorgen.push(metingenOvermorgen[0]);
     }
 
-    appendTideCards(metingenVandaag, cardContainer, { darkblue: 'darkblue', lightblue: 'lightblue' });
-    appendTideCards(metingenMorgen, tomorrowContainer, { darkblue: 'gray-dark', lightblue: 'gray-light' });
+    appendTideCards(metingenVandaag, cardContainer, { darkblue: 'darkblue', lightblue: 'lightblue' }, true);
+    appendTideCards(metingenMorgen, tomorrowContainer, { darkblue: 'gray-dark', lightblue: 'gray-light' }, false);
+}
+
+// Helper to check if two dates are the same day (year, month, day)
+function isSameDay(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
 }
 
 document.addEventListener("DOMContentLoaded", getTideData);

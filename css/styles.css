@@ -58,7 +58,6 @@ th {
     text-align: center;
     width: 100%;
     max-width: 450px;
-    margin: auto;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     flex: 1; /* Zorgt dat beide kaarten gelijke ruimte krijgen */
 }
@@ -66,7 +65,7 @@ th {
 .day-card h3 {
     font-size: 24px;
     margin-top: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .grid-container {
@@ -92,7 +91,6 @@ th {
 .tijd {
     font-size: 30px;
     font-weight: bold;
-    margin-bottom: 2px;
 }
 
 .tomorrow-card {
@@ -103,7 +101,6 @@ th {
     text-align: center;
     width: 100%;
     max-width: 450px;
-    margin: auto;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
@@ -136,12 +133,11 @@ th {
     }
 
     .grid-container {
-        grid-template-columns: 1fr;
         gap: 15px;
     }
 
     .tide-card {
-        max-width: 140px;
+        max-width: 90%;
         font-size: 16px;
     }
 
@@ -153,4 +149,14 @@ th {
     .afbeelding {
         max-width: 100%; /* Volledige breedte op kleinere schermen */
     }
+}
+
+.tide-card * {
+    margin: 0;
+}
+
+.next-tide {
+    outline: 3px solid #ffcc00;
+    box-shadow: 0 0 12px 2px #ffcc00;
+    z-index: 2;
 }
