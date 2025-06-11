@@ -1,6 +1,6 @@
 [
     {
-        "name": "tideData",
+        "name": "getijExtremenScheveningenData",
         "endpoint": "https://rws-proxy.onrender.com/api/ONLINEWAARNEMINGENSERVICES_DBO/OphalenWaarnemingen",
         "begindatum": {
             "format": "Y-m-d\\TH:i:s.000+01:00",
