@@ -1,3 +1,8 @@
+// Register annotation plugin from UMD global if available
+if (window.ChartAnnotation) {
+  Chart.register(window.ChartAnnotation);
+}
+
 async function getTideData() {
     const jsonUrl = "/data/getijExtremenScheveningenData.json"; // Verwijzing naar lokaal JSON-bestand
 
@@ -209,35 +214,6 @@ async function loadAndDisplayWaterHoogteGraph() {
             closestIdx = i;
         }
     });
-    // Chart.js v4+ plugin registration (annotation plugin is window['ChartAnnotationPlugin'])
-    let annotationPluginRegistered = false;
-    if (window['ChartAnnotationPlugin']) {
-        Chart.register(window['ChartAnnotationPlugin']);
-        annotationPluginRegistered = true;
-        console.log('✅ ChartAnnotationPlugin registered from window.ChartAnnotationPlugin');
-    } else if (window['chartjs-plugin-annotation']) {
-        Chart.register(window['chartjs-plugin-annotation']);
-        annotationPluginRegistered = true;
-        console.log('✅ ChartAnnotationPlugin registered from window.chartjs-plugin-annotation');
-    } else if (window['ChartAnnotation']) {
-        Chart.register(window['ChartAnnotation']);
-        annotationPluginRegistered = true;
-        console.log('✅ ChartAnnotationPlugin registered from window.ChartAnnotation (UMD)');
-    } else {
-        console.warn('❌ Chart.js annotation plugin not found on window. No annotations will be shown.');
-    }
-    // Bepaal index van huidige tijd (dichtstbijzijnde punt)
-    const nowGraph = new Date();
-    let closestIdxGraph = 0;
-    let minDiffGraph = Infinity;
-    rows.forEach((row, i) => {
-        const diff = Math.abs(new Date(row.tijd) - nowGraph);
-        if (diff < minDiffGraph) {
-            minDiffGraph = diff;
-            closestIdxGraph = i;
-        }
-    });
-    console.log('Annotation index:', closestIdxGraph, 'Label:', labels[closestIdxGraph]);
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -256,13 +232,13 @@ async function loadAndDisplayWaterHoogteGraph() {
             plugins: {
                 legend: { display: false },
                 title: { display: true, text: 'Waterhoogte' },
-                annotation: annotationPluginRegistered ? {
+                annotation: {
                     clip: false, // Zorg dat annotaties buiten de chart area zichtbaar zijn
                     annotations: {
                         currentTimeBox: {
                             type: 'box',
-                            xMin: Math.max(closestIdxGraph - 0.5, 0),
-                            xMax: Math.min(closestIdxGraph + 0.5, labels.length - 1),
+                            xMin: Math.max(closestIdx - 0.5, 0),
+                            xMax: Math.min(closestIdx + 0.5, labels.length - 1),
                             backgroundColor: 'rgba(255,0,0,0.12)',
                             borderColor: 'red',
                             borderWidth: 2,
@@ -294,7 +270,7 @@ async function loadAndDisplayWaterHoogteGraph() {
                             display: true
                         }
                     }
-                } : undefined
+                }
             },
             scales: {
                 x: {
