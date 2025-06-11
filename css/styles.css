@@ -152,9 +152,13 @@ th {
 }
 
 @media (max-width: 768px) and (prefers-color-scheme: dark) {
-    body {
-        background-color: #181c20;
-        color: #f0f0f0;
+    html, body {
+        background-color: #181c20 !important;
+        color: #f0f0f0 !important;
+    }
+    table, th, td {
+        background: transparent !important;
+        color: #f0f0f0 !important;
     }
     /* Do NOT change card colors, only background and text */
 }
