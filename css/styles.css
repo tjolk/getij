@@ -151,6 +151,14 @@ th {
     }
 }
 
+@media (max-width: 768px) and (prefers-color-scheme: dark) {
+    body {
+        background-color: #181c20;
+        color: #f0f0f0;
+    }
+    /* Do NOT change card colors, only background and text */
+}
+
 .tide-card * {
     margin: 0;
 }
