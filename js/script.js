@@ -210,8 +210,21 @@ async function loadAndDisplayWaterHoogteGraph() {
         }
     });
     // Chart.js v4+ plugin registration (annotation plugin is window['ChartAnnotationPlugin'])
+    let annotationPluginRegistered = false;
     if (window['ChartAnnotationPlugin']) {
         Chart.register(window['ChartAnnotationPlugin']);
+        annotationPluginRegistered = true;
+        console.log('✅ ChartAnnotationPlugin registered from window.ChartAnnotationPlugin');
+    } else if (window['chartjs-plugin-annotation']) {
+        Chart.register(window['chartjs-plugin-annotation']);
+        annotationPluginRegistered = true;
+        console.log('✅ ChartAnnotationPlugin registered from window.chartjs-plugin-annotation');
+    } else if (window['ChartAnnotation']) {
+        Chart.register(window['ChartAnnotation']);
+        annotationPluginRegistered = true;
+        console.log('✅ ChartAnnotationPlugin registered from window.ChartAnnotation (UMD)');
+    } else {
+        console.warn('❌ Chart.js annotation plugin not found on window. No annotations will be shown.');
     }
     // Bepaal index van huidige tijd (dichtstbijzijnde punt)
     const nowGraph = new Date();
@@ -243,13 +256,14 @@ async function loadAndDisplayWaterHoogteGraph() {
             plugins: {
                 legend: { display: false },
                 title: { display: true, text: 'Waterhoogte' },
-                annotation: {
+                annotation: annotationPluginRegistered ? {
                     clip: false, // Zorg dat annotaties buiten de chart area zichtbaar zijn
                     annotations: {
-                        currentTimeLine: {
-                            type: 'line',
-                            xMin: closestIdxGraph,
-                            xMax: closestIdxGraph,
+                        currentTimeBox: {
+                            type: 'box',
+                            xMin: Math.max(closestIdxGraph - 0.5, 0),
+                            xMax: Math.min(closestIdxGraph + 0.5, labels.length - 1),
+                            backgroundColor: 'rgba(255,0,0,0.12)',
                             borderColor: 'red',
                             borderWidth: 2,
                             label: {
@@ -260,14 +274,27 @@ async function loadAndDisplayWaterHoogteGraph() {
                                 font: { weight: 'bold' },
                                 backgroundColor: 'rgba(255,255,255,0.8)',
                                 padding: 4,
-                                // always show label
                                 enabled: true
                             },
-                            drawTime: 'afterDraw', // Zorg dat de lijn altijd bovenop ligt
+                            drawTime: 'afterDraw',
+                            display: true
+                        },
+                        testLine: {
+                            type: 'line',
+                            yMin: 0,
+                            yMax: 0,
+                            borderColor: 'blue',
+                            borderWidth: 2,
+                            label: {
+                                display: true,
+                                content: 'y=0',
+                                color: 'blue',
+                                enabled: true
+                            },
                             display: true
                         }
                     }
-                }
+                } : undefined
             },
             scales: {
                 x: {
