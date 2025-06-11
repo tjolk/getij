@@ -204,6 +204,21 @@ async function loadAndDisplayWaterHoogteGraph() {
     const data = rows.map(row => (row.gemeten != null) ? row.gemeten : (row.verwacht != null ? row.verwacht : null));
     // Chart.js grafiek
     const ctx = document.getElementById('waterhoogte-graph').getContext('2d');
+    // Bepaal index van huidige tijd (dichtstbijzijnde punt)
+    const now = new Date();
+    let closestIdx = 0;
+    let minDiff = Infinity;
+    rows.forEach((row, i) => {
+        const diff = Math.abs(new Date(row.tijd) - now);
+        if (diff < minDiff) {
+            minDiff = diff;
+            closestIdx = i;
+        }
+    });
+    // Chart.js v4+ plugin registration (annotation plugin is window['ChartAnnotationPlugin'])
+    if (window['ChartAnnotationPlugin']) {
+        Chart.register(window['ChartAnnotationPlugin']);
+    }
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -222,23 +237,40 @@ async function loadAndDisplayWaterHoogteGraph() {
             responsive: true,
             plugins: {
                 legend: { display: false },
-                title: { display: false }
+                title: { display: true, text: 'Waterhoogte' },
+                annotation: {
+                    annotations: {
+                        currentTimeLine: {
+                            type: 'line',
+                            xMin: closestIdx,
+                            xMax: closestIdx,
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            label: {
+                                display: true,
+                                content: 'Nu',
+                                position: 'start',
+                                color: 'red',
+                                font: { weight: 'normal' }
+                            }
+                        }
+                    }
+                }
             },
             scales: {
                 x: {
-                    title: { display: true, text: 'Tijd (elke 3 uur)' },
+                    title: { display: true, text: 'Tijd' },
                     grid: { display: false },
                     ticks: {
                         color: '#888',
                         maxRotation: 0,
-                        minRotation: 0,
-                        autoSkip: false,
-                        font: { size: 14 }
+                        minRotation: 0
                     }
                 },
                 y: {
-                    title: { display: true, text: 'Waterhoogte (cm)' },
-                    grid: { color: 'rgba(0,0,0,0.06)' }
+                    display: false,
+                    title: { display: false },
+                    grid: { display: false }
                 }
             }
         }

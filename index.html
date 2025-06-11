@@ -14,17 +14,15 @@
 <body>
     <h1>Scheveningen</h1>
 <h2>Getijden</h2>
-    <!-- Waterhoogte grafiek -->
-    <div style="max-width:900px;margin:30px auto 30px auto;">
-      <canvas id="waterhoogte-graph" height="300"></canvas>
+    <div style="max-width:100%;margin:0px;">
+      <canvas id="waterhoogte-graph" height="100"></canvas>
     </div>
     <div class="tides-container">
         <div id="tides-day-card" class="day-card">
             <h3 id="day-title">Getijden vandaag</h3>
             <div id="tides-card-container" class="grid-container"></div>
         </div>
-
-        <div id="tides-tomorrow-card" class="day-card tomorrow-card">
+    <div id="tides-tomorrow-card" class="day-card tomorrow-card">
             <h3 id="tomorrow-title">Getijden morgen</h3>
             <div id="tides-tomorrow-container" class="grid-container"></div>
         </div>
@@ -34,6 +32,7 @@
 <br>
 <img src="images/waarschuwingsvlaggen.png" alt="Waarschuwingsvlaggen op het strand" class="afbeelding">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@4.1.1/dist/chartjs-plugin-annotation.umd.min.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
