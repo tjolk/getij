@@ -151,7 +151,7 @@ th {
     }
 }
 
-@media (max-width: 768px) and (prefers-color-scheme: dark) {
+@media (max-width: 768px) {
     html, body {
         background-color: #181c20 !important;
         color: #f0f0f0 !important;
