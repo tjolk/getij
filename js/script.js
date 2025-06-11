@@ -1,6 +1,20 @@
+console.log('🔎 Annotation-related keys on window:', Object.keys(window).filter(k => k.toLowerCase().includes('annotation')));
+console.log('Chart keys:', Object.keys(Chart));
+console.log('Chart.AnnotationPlugin:', Chart.AnnotationPlugin);
+console.log('Chart.annotationPlugin:', Chart.annotationPlugin);
+console.log('Chart.plugins:', Chart.plugins);
 // Register annotation plugin from UMD global if available
 if (window.ChartAnnotation) {
   Chart.register(window.ChartAnnotation);
+  console.log('✅ ChartAnnotation plugin registered from window.ChartAnnotation');
+} else if (Chart.AnnotationPlugin) {
+  Chart.register(Chart.AnnotationPlugin);
+  console.log('✅ ChartAnnotation plugin registered from Chart.AnnotationPlugin');
+} else if (Chart.annotationPlugin) {
+  Chart.register(Chart.annotationPlugin);
+  console.log('✅ ChartAnnotation plugin registered from Chart.annotationPlugin');
+} else {
+  console.warn('❌ ChartAnnotation plugin NOT registered!');
 }
 
 async function getTideData() {
@@ -213,6 +227,42 @@ async function loadAndDisplayWaterHoogteGraph() {
             minDiff = diff;
             closestIdx = i;
         }
+    });
+    console.log('Creating Chart.js line chart. Annotation config:', {
+      currentTimeBox: {
+        type: 'box',
+        xMin: 'calculated',
+        xMax: 'calculated',
+        backgroundColor: 'rgba(255,0,0,0.12)',
+        borderColor: 'red',
+        borderWidth: 2,
+        label: {
+          display: true,
+          content: 'Nu',
+          position: 'start',
+          color: 'red',
+          font: { weight: 'bold' },
+          backgroundColor: 'rgba(255,255,255,0.8)',
+          padding: 4,
+          enabled: true
+        },
+        drawTime: 'afterDraw',
+        display: true
+      },
+      testLine: {
+        type: 'line',
+        yMin: 0,
+        yMax: 0,
+        borderColor: 'blue',
+        borderWidth: 2,
+        label: {
+          display: true,
+          content: 'y=0',
+          color: 'blue',
+          enabled: true
+        },
+        display: true
+      }
     });
     new Chart(ctx, {
         type: 'line',
