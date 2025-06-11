@@ -1,20 +1,6 @@
-console.log('🔎 Annotation-related keys on window:', Object.keys(window).filter(k => k.toLowerCase().includes('annotation')));
-console.log('Chart keys:', Object.keys(Chart));
-console.log('Chart.AnnotationPlugin:', Chart.AnnotationPlugin);
-console.log('Chart.annotationPlugin:', Chart.annotationPlugin);
-console.log('Chart.plugins:', Chart.plugins);
-// Register annotation plugin from UMD global if available
+// Register annotation plugin for Chart.js v3
 if (window.ChartAnnotation) {
   Chart.register(window.ChartAnnotation);
-  console.log('✅ ChartAnnotation plugin registered from window.ChartAnnotation');
-} else if (Chart.AnnotationPlugin) {
-  Chart.register(Chart.AnnotationPlugin);
-  console.log('✅ ChartAnnotation plugin registered from Chart.AnnotationPlugin');
-} else if (Chart.annotationPlugin) {
-  Chart.register(Chart.annotationPlugin);
-  console.log('✅ ChartAnnotation plugin registered from Chart.annotationPlugin');
-} else {
-  console.warn('❌ ChartAnnotation plugin NOT registered!');
 }
 
 async function getTideData() {
@@ -25,7 +11,6 @@ async function getTideData() {
         if (!response.ok) throw new Error(`Fout: ${response.status} ${response.statusText}`);
 
         const data = await response.json();
-        console.log("🌊 Gecachte getijdendata geladen:", data);
         displayTides(data);
     } catch (error) {
         console.error("❌ Fout bij het ophalen van JSON-data:", error);
@@ -228,42 +213,6 @@ async function loadAndDisplayWaterHoogteGraph() {
             closestIdx = i;
         }
     });
-    console.log('Creating Chart.js line chart. Annotation config:', {
-      currentTimeBox: {
-        type: 'box',
-        xMin: 'calculated',
-        xMax: 'calculated',
-        backgroundColor: 'rgba(255,0,0,0.12)',
-        borderColor: 'red',
-        borderWidth: 2,
-        label: {
-          display: true,
-          content: 'Nu',
-          position: 'start',
-          color: 'red',
-          font: { weight: 'bold' },
-          backgroundColor: 'rgba(255,255,255,0.8)',
-          padding: 4,
-          enabled: true
-        },
-        drawTime: 'afterDraw',
-        display: true
-      },
-      testLine: {
-        type: 'line',
-        yMin: 0,
-        yMax: 0,
-        borderColor: 'blue',
-        borderWidth: 2,
-        label: {
-          display: true,
-          content: 'y=0',
-          color: 'blue',
-          enabled: true
-        },
-        display: true
-      }
-    });
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -274,7 +223,8 @@ async function loadAndDisplayWaterHoogteGraph() {
                 borderColor: '#005f9e',
                 backgroundColor: 'rgba(0,95,158,0.08)',
                 pointRadius: 0, // geen punten
-                tension: 1 // vloeiender lijn
+                tension: 1, // vloeiender lijn
+                fill: { target: { value: -100 }, above: 'rgba(0,95,158,0.08)', below: 'rgba(0,95,158,0.08)' } // fill to y = -100
             }]
         },
         options: {
@@ -283,40 +233,15 @@ async function loadAndDisplayWaterHoogteGraph() {
                 legend: { display: false },
                 title: { display: true, text: 'Waterhoogte' },
                 annotation: {
-                    clip: false, // Zorg dat annotaties buiten de chart area zichtbaar zijn
+                    //clip: false, // Zorg dat annotaties buiten de chart area zichtbaar zijn
                     annotations: {
                         currentTimeBox: {
-                            type: 'box',
+                            type: 'line',
                             xMin: Math.max(closestIdx - 0.5, 0),
                             xMax: Math.min(closestIdx + 0.5, labels.length - 1),
-                            backgroundColor: 'rgba(255,0,0,0.12)',
-                            borderColor: 'red',
+                            borderColor: 'rgba(255,204,0,0.5)',
                             borderWidth: 2,
-                            label: {
-                                display: true,
-                                content: 'Nu',
-                                position: 'start',
-                                color: 'red',
-                                font: { weight: 'bold' },
-                                backgroundColor: 'rgba(255,255,255,0.8)',
-                                padding: 4,
-                                enabled: true
-                            },
                             drawTime: 'afterDraw',
-                            display: true
-                        },
-                        testLine: {
-                            type: 'line',
-                            yMin: 0,
-                            yMax: 0,
-                            borderColor: 'blue',
-                            borderWidth: 2,
-                            label: {
-                                display: true,
-                                content: 'y=0',
-                                color: 'blue',
-                                enabled: true
-                            },
                             display: true
                         }
                     }
