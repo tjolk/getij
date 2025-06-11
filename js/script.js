@@ -192,14 +192,8 @@ async function loadAndDisplayWaterHoogteGraph() {
     // Data voor grafiek: x = tijd, y = gemeten of verwacht
     const labels = rows.map(row => {
         const date = new Date(row.tijd);
-        const hour = date.getHours();
-        // Toon alleen als het uur deelbaar is door 12 (bijv. 0, 12)
-        if (hour % 12 === 0) {
-            // Toon alleen het uur (bv. 00:00 of 12:00)
-            return date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
-        } else {
-            return '';
-        }
+        // Toon altijd het uur (bv. 00:00, 01:00, ...)
+        return date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
     });
     const data = rows.map(row => (row.gemeten != null) ? row.gemeten : (row.verwacht != null ? row.verwacht : null));
     // Chart.js grafiek
@@ -219,6 +213,18 @@ async function loadAndDisplayWaterHoogteGraph() {
     if (window['ChartAnnotationPlugin']) {
         Chart.register(window['ChartAnnotationPlugin']);
     }
+    // Bepaal index van huidige tijd (dichtstbijzijnde punt)
+    const nowGraph = new Date();
+    let closestIdxGraph = 0;
+    let minDiffGraph = Infinity;
+    rows.forEach((row, i) => {
+        const diff = Math.abs(new Date(row.tijd) - nowGraph);
+        if (diff < minDiffGraph) {
+            minDiffGraph = diff;
+            closestIdxGraph = i;
+        }
+    });
+    console.log('Annotation index:', closestIdxGraph, 'Label:', labels[closestIdxGraph]);
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -229,7 +235,6 @@ async function loadAndDisplayWaterHoogteGraph() {
                 borderColor: '#005f9e',
                 backgroundColor: 'rgba(0,95,158,0.08)',
                 pointRadius: 0, // geen punten
-                fill: true,
                 tension: 1 // vloeiender lijn
             }]
         },
@@ -239,11 +244,12 @@ async function loadAndDisplayWaterHoogteGraph() {
                 legend: { display: false },
                 title: { display: true, text: 'Waterhoogte' },
                 annotation: {
+                    clip: false, // Zorg dat annotaties buiten de chart area zichtbaar zijn
                     annotations: {
                         currentTimeLine: {
                             type: 'line',
-                            xMin: closestIdx,
-                            xMax: closestIdx,
+                            xMin: closestIdxGraph,
+                            xMax: closestIdxGraph,
                             borderColor: 'red',
                             borderWidth: 2,
                             label: {
@@ -251,8 +257,14 @@ async function loadAndDisplayWaterHoogteGraph() {
                                 content: 'Nu',
                                 position: 'start',
                                 color: 'red',
-                                font: { weight: 'normal' }
-                            }
+                                font: { weight: 'bold' },
+                                backgroundColor: 'rgba(255,255,255,0.8)',
+                                padding: 4,
+                                // always show label
+                                enabled: true
+                            },
+                            drawTime: 'afterDraw', // Zorg dat de lijn altijd bovenop ligt
+                            display: true
                         }
                     }
                 }
@@ -260,12 +272,7 @@ async function loadAndDisplayWaterHoogteGraph() {
             scales: {
                 x: {
                     title: { display: true, text: 'Tijd' },
-                    grid: { display: false },
-                    ticks: {
-                        color: '#888',
-                        maxRotation: 0,
-                        minRotation: 0
-                    }
+                    grid: { display: false }
                 },
                 y: {
                     display: false,
