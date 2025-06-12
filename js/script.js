@@ -170,7 +170,9 @@ async function loadAndDisplayWaterHoogteTable() {
             `<td>${waarde}</td></tr>`;
     });
     html += '</tbody></table>';
-    document.getElementById('waterhoogte-table').innerHTML = html;
+    if (document.getElementById('waterhoogte-table')) {
+        document.getElementById('waterhoogte-table').innerHTML = html;
+    }
 }
 
 // --- WATERHOOGTE GRAFIEK LOGICA ---
@@ -202,6 +204,9 @@ async function loadAndDisplayWaterHoogteGraph() {
     const data = rows.map(row => (row.gemeten != null) ? row.gemeten : (row.verwacht != null ? row.verwacht : null));
     // Chart.js grafiek
     const ctx = document.getElementById('waterhoogte-graph').getContext('2d');
+    // Smooth the data using a moving average (window size 5)
+    const smoothedData = movingAverage(data, 10);
+
     // Bepaal index van huidige tijd (dichtstbijzijnde punt)
     const now = new Date();
     let closestIdx = 0;
@@ -213,25 +218,97 @@ async function loadAndDisplayWaterHoogteGraph() {
             closestIdx = i;
         }
     });
+    // Find highest and lowest points
+    const values = rows.map(d => (d.gemeten != null) ? d.gemeten : (d.verwacht != null ? d.verwacht : null));
+    const maxValue = Math.max(...values);
+    const minValue = Math.min(...values);
+    const maxIndex = values.indexOf(maxValue);
+    const minIndex = values.indexOf(minValue);
+    const maxLabel = rows[maxIndex].tijd;
+    const minLabel = rows[minIndex].tijd;
+
+    // Find all 8-hour window maxima (label only the first of the middle if there are ties)
+    const windowHours = 1;
+    const pointsPerHour = Math.round(rows.length / 24); // Estimate points per hour
+    const windowSize = Math.max(1, Math.floor((windowHours * pointsPerHour) / 2));
+    const highPoints = [];
+    for (let i = windowSize; i < values.length - windowSize; i++) {
+        // Get window
+        const windowVals = values.slice(i - windowSize, i + windowSize + 1);
+        const maxInWindow = Math.max(...windowVals);
+        if (values[i] === maxInWindow) {
+            // Find all indices in window with max value
+            const maxIndices = [];
+            for (let j = 0; j < windowVals.length; j++) {
+                if (windowVals[j] === maxInWindow) maxIndices.push(j);
+            }
+            const center = windowSize;
+            // Label if this is the first OR the middle one (for ties)
+            let labelIdx = maxIndices[Math.floor((maxIndices.length - 1) / 2)];
+            if ((maxIndices[0] === center && i === (i - windowSize + maxIndices[0])) || (labelIdx === center)) {
+                if (i === 0 || values[i] !== values[i-1]) {
+                    highPoints.push({
+                        index: i,
+                        value: values[i],
+                        tijd: rows[i].tijd
+                    });
+                }
+            }
+        }
+    }
+    // Add the global max if not already included
+    if (!highPoints.some(p => p.index === maxIndex)) {
+        highPoints.push({ index: maxIndex, value: maxValue, tijd: maxLabel });
+    }
+
+    // Find all 8-hour window minima (label only the first or the middle if there are ties)
+    const lowPoints = [];
+    for (let i = windowSize; i < values.length - windowSize; i++) {
+        const windowVals = values.slice(i - windowSize, i + windowSize + 1);
+        const minInWindow = Math.min(...windowVals);
+        if (values[i] === minInWindow) {
+            // Find all indices in window with min value
+            const minIndices = [];
+            for (let j = 0; j < windowVals.length; j++) {
+                if (windowVals[j] === minInWindow) minIndices.push(j);
+            }
+            const center = windowSize;
+            let labelIdx = minIndices[Math.floor((minIndices.length - 1) / 2)];
+            if ((minIndices[0] === center && i === (i - windowSize + minIndices[0])) || (labelIdx === center)) {
+                if (i === 0 || values[i] !== values[i-1]) {
+                    lowPoints.push({
+                        index: i,
+                        value: values[i],
+                        tijd: rows[i].tijd
+                    });
+                }
+            }
+        }
+    }
+    // Add the global min if not already included
+    if (!lowPoints.some(p => p.index === minIndex)) {
+        lowPoints.push({ index: minIndex, value: minValue, tijd: minLabel });
+    }
+
     new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Waterhoogte (cm)',
-                data: data,
-                borderColor: '#005f9e',
-                backgroundColor: 'rgba(0,95,158,0.08)',
+                data: smoothedData,
+                borderColor: 'rgba(173, 216, 230,0)',
+                backgroundColor: 'darkblue',
+                fill: { target: { value: -100 }, above: 'darkblue', below: 'darkblue' },
                 pointRadius: 0, // geen punten
-                tension: 1, // vloeiender lijn
-                fill: { target: { value: -100 }, above: 'rgba(0,95,158,0.08)', below: 'rgba(0,95,158,0.08)' } // fill to y = -100
+                tension: 1, // vloeiender lijn (was 0.5)
             }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: { display: false },
-                title: { display: true, text: 'Waterhoogte' },
+                title: { display: false },
                 annotation: {
                     //clip: false, // Zorg dat annotaties buiten de chart area zichtbaar zijn
                     annotations: {
@@ -239,27 +316,92 @@ async function loadAndDisplayWaterHoogteGraph() {
                             type: 'line',
                             xMin: Math.max(closestIdx - 0.5, 0),
                             xMax: Math.min(closestIdx + 0.5, labels.length - 1),
-                            borderColor: 'rgba(255,204,0,0.5)',
+                            borderColor: 'rgba(255,204,0,1)',
                             borderWidth: 2,
                             drawTime: 'afterDraw',
                             display: true
-                        }
+                        },
+                        // Add all high value labels
+                        ...Object.fromEntries(highPoints.map((p, idx) => [
+                            `highLabel${idx}`,
+                            {
+                                type: 'line',
+                                xMin: p.index,
+                                xMax: p.index,
+                                yMin: p.value,
+                                yMax: p.value,
+                                label: {
+                                    enabled: true,
+                                    content: [formatDateTime(p.tijd).tijd],
+                                    backgroundColor: 'rgba(0,0,0,0)', // transparent background
+                                    color: '#fff',
+                                    font: { size: 10 },
+                                    yAdjust: -7
+                                }
+                            }
+                        ])),
+                        // Add all low value labels
+                        ...Object.fromEntries(lowPoints.map((p, idx) => [
+                            `lowLabel${idx}`,
+                            {
+                                type: 'line',
+                                xMin: p.index,
+                                xMax: p.index,
+                                yMin: p.value,
+                                yMax: p.value,
+                                label: {
+                                    enabled: true,
+                                    content: [formatDateTime(p.tijd).tijd],
+                                    position: 'bottom',
+                                    backgroundColor: 'rgba(0,0,0,0)', // transparent background
+                                    color: '#fff',
+                                    font: { size: 10 },
+                                    yAdjust: 5
+                                }
+                            }
+                        ])),
                     }
                 }
             },
             scales: {
                 x: {
-                    title: { display: true, text: 'Tijd' },
-                    grid: { display: false }
+                    display: false
                 },
                 y: {
-                    display: false,
-                    title: { display: false },
-                    grid: { display: false }
+                    display: false
                 }
             }
         }
     });
+
+    // Add a background color to the chart area (darkblue, like high tide cards)
+    Chart.register({
+        id: 'customCanvasBackgroundColor',
+        beforeDraw: (chart) => {
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'lightblue';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    });
+}
+
+// Apply a moving average smoothing to the data before plotting
+function movingAverage(arr, windowSize) {
+    const result = [];
+    for (let i = 0; i < arr.length; i++) {
+        let start = Math.max(0, i - Math.floor(windowSize / 2));
+        let end = Math.min(arr.length, i + Math.ceil(windowSize / 2));
+        let window = arr.slice(start, end).filter(v => v !== null && v !== undefined);
+        if (window.length > 0) {
+            result.push(window.reduce((a, b) => a + b, 0) / window.length);
+        } else {
+            result.push(null);
+        }
+    }
+    return result;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
