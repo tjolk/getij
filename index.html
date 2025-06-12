@@ -13,21 +13,24 @@
 </head>
 <body>
     <h1>Scheveningen</h1>
-<br>
 <h2>Getijden</h2>
-<div class="tides-container">
-    <div id="tides-day-card" class="day-card">
-        <h3 id="day-title">Getijden vandaag</h3>
-        <div id="tides-card-container" class="grid-container"></div>
+    <div class="responsive-canvas-container">
+      <canvas id="waterhoogte-graph"></canvas>
     </div>
-
+    <div class="tides-container">
+        <div id="tides-day-card" class="day-card">
+            <h3 id="day-title">Getijden vandaag</h3>
+            <div id="tides-card-container" class="grid-container"></div>
+        </div>
     <div id="tides-tomorrow-card" class="day-card tomorrow-card">
-        <h3 id="tomorrow-title">Getijden morgen</h3>
-        <div id="tides-tomorrow-container" class="grid-container"></div>
+            <h3 id="tomorrow-title">Getijden morgen</h3>
+            <div id="tides-tomorrow-container" class="grid-container"></div>
+        </div>
     </div>
-</div>
 <br>
 <img src="images/waarschuwingsvlaggen.png" alt="Waarschuwingsvlaggen op het strand" class="afbeelding">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.1.0/dist/chartjs-plugin-annotation.min.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
