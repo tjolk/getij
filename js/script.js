@@ -32,10 +32,9 @@ function formatDateTime(isoString) {
     };
 }
 
-function appendTideCards(metingen, container, colorMap, highlightNextTide = false) {
+function appendTideCards(metingen, container, colorMap, highlightNextTide = false, nextTideIndex = -1) {
     // Find the next tide (first one in the future)
-    let nextTideIndex = -1;
-    if (highlightNextTide) {
+    if (highlightNextTide && nextTideIndex === -1) {
         const now = new Date();
         for (let i = 0; i < metingen.length; i++) {
             const tideTime = new Date(metingen[i].tijdstip);
@@ -127,8 +126,27 @@ function displayTides(data) {
         metingenMorgen.push(metingenOvermorgen[0]);
     }
 
-    appendTideCards(metingenVandaag, cardContainer, { darkblue: 'darkblue', lightblue: 'lightblue' }, true);
-    appendTideCards(metingenMorgen, tomorrowContainer, { darkblue: 'gray-dark', lightblue: 'gray-light' }, false);
+    // Find the next tide index for today and tomorrow
+    const now = new Date();
+    let nextTideIndexVandaag = -1;
+    let nextTideIndexMorgen = -1;
+    for (let i = 0; i < metingenVandaag.length; i++) {
+        if (new Date(metingenVandaag[i].tijdstip) > now) {
+            nextTideIndexVandaag = i;
+            break;
+        }
+    }
+    if (nextTideIndexVandaag === -1) {
+        for (let i = 0; i < metingenMorgen.length; i++) {
+            if (new Date(metingenMorgen[i].tijdstip) > now) {
+                nextTideIndexMorgen = i;
+                break;
+            }
+        }
+    }
+
+    appendTideCards(metingenVandaag, cardContainer, { darkblue: 'darkblue', lightblue: 'lightblue' }, true, nextTideIndexVandaag);
+    appendTideCards(metingenMorgen, tomorrowContainer, { darkblue: 'gray-dark', lightblue: 'gray-light' }, true, nextTideIndexMorgen);
 }
 
 // Helper to check if two dates are the same day (year, month, day)
@@ -299,7 +317,7 @@ async function loadAndDisplayWaterHoogteGraph() {
                 data: smoothedData,
                 borderColor: 'rgba(173, 216, 230,0)',
                 backgroundColor: '#005f9e',
-                fill: { target: { value: -100 }, above: '#005f9e', below: '#005f9e' },
+                fill: { target: { value: -200 }, above: '#005f9e', below: '#005f9e' },
                 pointRadius: 0, // geen punten
                 tension: 1, // vloeiender lijn (was 0.5)
             }]
@@ -335,7 +353,7 @@ async function loadAndDisplayWaterHoogteGraph() {
                                     content: [formatDateTime(p.tijd).tijd],
                                     backgroundColor: 'rgba(0,0,0,0)', // transparent background
                                     color: '#fff',
-                                    font: { size: 10 },
+                                    font: { size: 14 },
                                     yAdjust: -7
                                 }
                             }
@@ -355,7 +373,7 @@ async function loadAndDisplayWaterHoogteGraph() {
                                     position: 'bottom',
                                     backgroundColor: 'rgba(0,0,0,0)', // transparent background
                                     color: '#fff',
-                                    font: { size: 10 },
+                                    font: { size: 14 },
                                     yAdjust: 5
                                 }
                             }
@@ -381,7 +399,7 @@ async function loadAndDisplayWaterHoogteGraph() {
             const ctx = chart.ctx;
             ctx.save();
             ctx.globalCompositeOperation = 'destination-over';
-            ctx.fillStyle = 'lightblue';
+            ctx.fillStyle = 'rgba(173, 216, 230, 1)'; // match the fill color
             ctx.fillRect(0, 0, chart.width, chart.height);
             ctx.restore();
         }
