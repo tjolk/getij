@@ -298,8 +298,8 @@ async function loadAndDisplayWaterHoogteGraph() {
                 label: 'Waterhoogte (cm)',
                 data: smoothedData,
                 borderColor: 'rgba(173, 216, 230,0)',
-                backgroundColor: 'darkblue',
-                fill: { target: { value: -100 }, above: 'darkblue', below: 'darkblue' },
+                backgroundColor: '#005f9e',
+                fill: { target: { value: -100 }, above: '#005f9e', below: '#005f9e' },
                 pointRadius: 0, // geen punten
                 tension: 1, // vloeiender lijn (was 0.5)
             }]

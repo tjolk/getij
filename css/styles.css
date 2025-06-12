@@ -5,7 +5,7 @@ body {
 }
 }
 .pijl {
-    font-size: 16px;
+    font-size: 2em;
     font-weight: bold;
 }
 
@@ -42,12 +42,13 @@ body {
     border-radius: 12px;
     text-align: center;
     width: 100%;
+    max-width: 450px;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     flex: 1; /* Zorgt dat beide kaarten gelijke ruimte krijgen */
 }
 
 .day-card h3 {
-    font-size: 24px;
+    font-size: 2em;
     margin-top: 5px;
     margin-bottom: 10px;
 }
@@ -64,8 +65,8 @@ body {
     max-width: 180px;
     padding: 10px;
     border-radius: 8px;
-    text-align: center;
-    font-size: 18px;
+    text-align: ceFnter;
+    font-size: 1em;
     box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
 }
 
@@ -73,7 +74,7 @@ body {
 .tide-card.lightblue { background-color: lightblue; color: black; }
 
 .tijd {
-    font-size: 30px;
+    font-size: 1.5em;
     font-weight: bold;
 }
 
@@ -84,12 +85,11 @@ body {
     border-radius: 12px;
     text-align: center;
     width: 100%;
-    max-width: 450px;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
 .tomorrow-card h3 {
-    font-size: 24px;
+    font-size: 2em;
     margin-top: 5px;
     margin-bottom: 15px;
     color: #f0f0f0; /* Lichtere tekstkleur */
@@ -127,7 +127,7 @@ body {
 
     .tide-card {
         max-width: 38vw;
-        font-size: 16px;
+        font-size: 1em;
     }
 
     .container {
@@ -136,7 +136,8 @@ body {
     }
 
     .afbeelding {
-        max-width: 100%; /* Volledige breedte op kleinere schermen */
+        max-width: 95vw; /* Volledige breedte op kleinere schermen */
+        border-radius: 12px;
     }
 }
 
