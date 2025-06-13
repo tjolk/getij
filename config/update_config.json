@@ -94,5 +94,13 @@
                 "Einddatumtijd": "{EINDDATUM}"
             }
         }
+    },
+    {
+        "name": "ipgeolocationAstronomy",
+        "endpoint": "https://api.ipgeolocation.io/v2/astronomy",
+        "apiKeyFile": "config/ipgeolocation.key",
+        "lat": 52.1,
+        "long": 4.26,
+        "days": 2
     }
 ]

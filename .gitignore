@@ -1,6 +1,6 @@
 # Ignore all files in the data directory
 /data/*
-
+/config/ipgeolocation.key
 # But do not ignore the log file if you want to keep it tracked (uncomment if needed)
 #!/data/update.log
 
