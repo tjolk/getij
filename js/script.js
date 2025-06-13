@@ -1,6 +1,6 @@
 // Register annotation plugin for Chart.js v3
 import { fetchTideData, fetchWaterHoogteData } from './data.js';
-import { appendTideCards, displayTides } from './ui.js';
+import { appendTideCards, displayTides, renderAstronomyTable } from './ui.js';
 import { renderWaterHoogteGraph } from './chart.js';
 import { formatDateTime, isSameDay } from './utils.js';
 
@@ -23,7 +23,14 @@ async function loadAndDisplayWaterHoogteGraph() {
     renderWaterHoogteGraph(rows);
 }
 
+async function loadAndDisplayAstronomyTable() {
+    const response = await fetch('data/ipgeolocationAstronomy.json');
+    const data = await response.json();
+    renderAstronomyTable(data, 'astronomy-table-container');
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     displayTidesFromApi();
     loadAndDisplayWaterHoogteGraph();
+    loadAndDisplayAstronomyTable();
 });

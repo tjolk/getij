@@ -106,3 +106,34 @@ export function displayTides(data) {
     appendTideCards(metingenVandaag, cardContainer, { darkblue: 'darkblue', lightblue: 'lightblue' }, true, nextTideIndexVandaag);
     appendTideCards(metingenMorgen, tomorrowContainer, { darkblue: 'gray-dark', lightblue: 'gray-light' }, true, nextTideIndexMorgen);
 }
+
+export function renderAstronomyTable(astronomyData, containerId) {
+    // Flatten all events with their datetime
+    let events = [];
+    for (const date in astronomyData) {
+        const astro = astronomyData[date].astronomy;
+        if (astro.sunrise && astro.sunrise !== "-:-") {
+            events.push({ type: "Zonsopkomst", datetime: `${date}T${astro.sunrise}` });
+        }
+        if (astro.sunset && astro.sunset !== "-:-") {
+            events.push({ type: "Zonsondergang", datetime: `${date}T${astro.sunset}` });
+        }
+        if (astro.moonrise && astro.moonrise !== "-:-") {
+            events.push({ type: "Maanopkomst", datetime: `${date}T${astro.moonrise}` });
+        }
+        if (astro.moonset && astro.moonset !== "-:-") {
+            events.push({ type: "Maanondergang", datetime: `${date}T${astro.moonset}` });
+        }
+    }
+    // Sort by datetime
+    events.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+    // Build table
+    let html = '<table><thead><tr><th>Type</th><th>Datum/tijd</th></tr></thead><tbody>';
+    events.forEach(ev => {
+        const d = new Date(ev.datetime);
+        html += `<tr><td>${ev.type}</td><td>${d.toLocaleString('nl-NL', { dateStyle: 'short', timeStyle: 'short' })}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = html;
+}
