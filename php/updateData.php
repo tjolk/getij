@@ -24,10 +24,6 @@ if (!is_array($endpoints)) {
     exit(1);
 }
 
-// Debug: print resolved config file path
-logMessage('Resolved config file path: ' . $configFile);
-echo 'Resolved config file path: ' . $configFile . '<br>';
-
 foreach ($endpoints as $endpoint) {
     if (isset($endpoint['body']) && isset($endpoint['begindatum']) && isset($endpoint['einddatum'])) {
         // --- RWS API (POST) ---
