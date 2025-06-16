@@ -52,7 +52,7 @@ foreach ($endpoints as $endpoint) {
             echo "⚠️ Fout bij het ophalen van getijdendata voor endpoint: " . ($endpoint['name'] ?? $url) . "<br>";
         }
     } elseif (isset($endpoint['lat']) && isset($endpoint['long']) && isset($endpoint['days'])) {
-        // --- ipgeolocation API (GET, 2 days) ---
+        // --- ipgeolocation API (GET, multiple days with offset) ---
         if (!defined('IPGEOLOCATION_API_KEY')) {
             logMessage('❌ IPGEOLOCATION_API_KEY is not defined in config_getij.php');
             continue;
@@ -62,9 +62,10 @@ foreach ($endpoints as $endpoint) {
         $lat = $endpoint['lat'];
         $long = $endpoint['long'];
         $days = intval($endpoint['days']);
+        $daysOffset = isset($endpoint['daysOffset']) ? intval($endpoint['daysOffset']) : 0;
         $results = [];
         for ($i = 0; $i < $days; $i++) {
-            $date = date('Y-m-d', strtotime("+$i day"));
+            $date = date('Y-m-d', strtotime(($i + $daysOffset) . ' day'));
             $query = http_build_query([
                 'apiKey' => $apiKey,
                 'lat' => $lat,

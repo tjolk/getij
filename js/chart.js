@@ -1,7 +1,16 @@
 // Chart.js graph logic for water height
 import { formatDateTime, movingAverage } from './utils.js';
 
-export function renderWaterHoogteGraph(rows) {
+export async function renderWaterHoogteGraph(rows) {
+    // Fetch astronomy data for overlays
+    let astronomyData = {};
+    try {
+        const resp = await fetch('data/ipgeolocationAstronomy.json');
+        astronomyData = await resp.json();
+    } catch (e) {
+        astronomyData = {};
+    }
+
     const labels = rows.map(row => {
         const date = new Date(row.tijd);
         return date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
@@ -93,6 +102,36 @@ export function renderWaterHoogteGraph(rows) {
         lowPoints.push({ index: minIndex, value: minValue, tijd: minLabel });
     }
 
+    // Calculate overlay regions (gray) between sunset and next sunrise
+    let overlays = [];
+    const dates = Object.keys(astronomyData).sort();
+    function findClosestIndex(targetDateTime) {
+        let minDiff = Infinity;
+        let idx = -1;
+        for (let i = 0; i < rows.length; i++) {
+            const diff = Math.abs(new Date(rows[i].tijd) - new Date(targetDateTime));
+            if (diff < minDiff) {
+                minDiff = diff;
+                idx = i;
+            }
+        }
+        return idx;
+    }
+    for (let i = 0; i < dates.length; i++) {
+        const astro = astronomyData[dates[i]].astronomy;
+        const sunset = astro.sunset;
+        const sunriseNext = astronomyData[dates[i+1]]?.astronomy?.sunrise;
+        if (sunset && sunriseNext) {
+            const sunsetDateTime = dates[i] + 'T' + sunset;
+            const sunriseDateTime = dates[i+1] + 'T' + sunriseNext;
+            const sunsetIdx = findClosestIndex(sunsetDateTime);
+            const sunriseIdx = findClosestIndex(sunriseDateTime);
+            if (sunsetIdx !== -1 && sunriseIdx !== -1 && sunriseIdx > sunsetIdx) {
+                overlays.push({ xMin: sunsetIdx, xMax: sunriseIdx });
+            }
+        }
+    }
+
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -158,6 +197,17 @@ export function renderWaterHoogteGraph(rows) {
                                     font: { size: 14 },
                                     yAdjust: 5
                                 }
+                            }
+                        ])),
+                        ...Object.fromEntries(overlays.map((o, idx) => [
+                            `nightOverlay${idx}`,
+                            {
+                                type: 'box',
+                                xMin: o.xMin,
+                                xMax: o.xMax,
+                                backgroundColor: 'rgba(128,128,128,0.25)',
+                                borderWidth: 0,
+                                drawTime: 'beforeDraw',
                             }
                         ])),
                     }
