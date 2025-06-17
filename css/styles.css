@@ -50,30 +50,10 @@ body {
     margin-bottom: 0;
 }
 
-.day-card, .sun-moon-card {
-    /* Inherit all from .card */
-}
-
 .day-card h3, .sun-moon-card h3 {
     font-size: 2em;
     margin-top: 5px;
     margin-bottom: 10px;
-}
-
-.sunrise-sunset-times {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.1em;
-  justify-content: center;
-}
-
-.sun-moon-card .sunrise-sunset-times {
-  flex-wrap: nowrap;
-  white-space: nowrap;
-  overflow-x: unset;
-  justify-content: center;
-  font-size: clamp(0.9em, 2.5vw, 1.1em);
 }
 
 .grid-container {
@@ -136,22 +116,15 @@ body {
   justify-items: center;
 }
 
-@media (max-width: 768px) {
-  .sun-moon-card .sun-moon-grid {
-    font-size: 1em;
-    text-wrap: nowrap;    
-  }
-}
-
 .sun-moon-card .sun-moon-grid-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   justify-content: center;
   width: 100%;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 768px), (max-width: 768px) {
     .tides-container {
         flex-direction: column;
         align-items: center;
@@ -180,12 +153,21 @@ body {
         max-width: 95vw;
         border-radius: 12px;
     }
-}
-
-@media (max-width: 768px) {
+    .sun-moon-card .sun-moon-grid {
+      font-size: 1em;
+      padding: 0 !important;
+      text-wrap: nowrap;    
+    }
+    .sun-moon-card {
+        padding: 0 !important;
+    }
     html, body {
         background-color: #b3cce6 !important;
         color: #f0f0f0 !important;
+    }
+    .responsive-canvas-container {
+        max-width: 95vw;
+        min-width: unset;
     }
 }
 
@@ -202,7 +184,8 @@ body {
 
 .responsive-canvas-container {
   width: 100vw;
-  max-width: 50vw;
+  max-width: 700px;
+  min-width: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -213,16 +196,22 @@ body {
 }
 
 .responsive-canvas-container canvas {
-  width: 100vw !important;
-  height: unset !important;
+  width: 100% !important;
+  height: 320px !important;
   display: block;
   border-radius: 12px;
 }
 
-@media (max-width: 768px) {
-  .responsive-canvas-container {
-    max-width: 95vw;
-  }
+@media screen and (max-width: 768px), (max-width: 768px) {
+    .responsive-canvas-container {
+        max-width: 95vw;
+        min-width: unset;
+    }
+    .responsive-canvas-container canvas {
+        height: 40vw !important;
+        min-height: 180px;
+        max-height: 320px;
+    }
 }
 
 h1 {
