@@ -140,7 +140,7 @@ export async function renderWaterHoogteGraph(rows) {
     const suggestedMax = maxValue + yPaddingAbove;
 
     // Add sun annotations between sunrise and sunset (Chart.js v3 + annotation v1.x: use type 'line' with label)
-    let sunAnnotations = [];
+    let sunIconPositions = [];
     for (let i = 0; i < dates.length; i++) {
         const astro = astronomyData[dates[i]].astronomy;
         const sunrise = astro.sunrise;
@@ -153,32 +153,13 @@ export async function renderWaterHoogteGraph(rows) {
             const sunsetIdx = findClosestIndex(sunsetDateTime);
             if (sunriseIdx !== -1 && sunsetIdx !== -1 && sunsetIdx > sunriseIdx) {
                 const sunIdx = Math.round((sunriseIdx + sunsetIdx) / 2);
-                sunAnnotations.push([
-                    `sun${i}`,
-                    {
-                        type: 'line',
-                        xMin: sunIdx,
-                        xMax: sunIdx,
-                        yMin: suggestedMax,
-                        yMax: suggestedMax,
-                        borderWidth: 0, // no line
-                        label: {
-                            enabled: true,
-                            content: ['☀'], // Material-like sun
-                            font: { size: 18, weight: 'normal' }, // less bold
-                            color: '#ffcc00',
-                            backgroundColor: 'rgba(0,0,0,0)',
-                            position: 'start',
-                            yAdjust: -10
-                        }
-                    }
-                ]);
+                sunIconPositions.push({ x: sunIdx, y: suggestedMax });
             }
         }
     }
 
     // Add moon annotations between moonrise and moonset (Chart.js v3 + annotation v1.x: use type 'line' with label)
-    let moonAnnotations = [];
+    let moonIconPositions = [];
     for (let i = 0; i < dates.length; i++) {
         const astro = astronomyData[dates[i]].astronomy;
         const moonrise = astro.moonrise;
@@ -191,26 +172,7 @@ export async function renderWaterHoogteGraph(rows) {
             const moonsetIdx = findClosestIndex(moonsetDateTime);
             if (moonriseIdx !== -1 && moonsetIdx !== -1 && moonsetIdx > moonriseIdx) {
                 const moonIdx = Math.round((moonriseIdx + moonsetIdx) / 2);
-                moonAnnotations.push([
-                    `moon${i}`,
-                    {
-                        type: 'line',
-                        xMin: moonIdx,
-                        xMax: moonIdx,
-                        yMin: suggestedMax,
-                        yMax: suggestedMax,
-                        borderWidth: 0, // no line
-                        label: {
-                            enabled: true,
-                            content: ['☾'], // Material-like moon
-                            font: { size: 12, weight: 'bold' }, // less bold
-                            color: '#ffcc00',
-                            backgroundColor: 'rgba(0,0,0,0)',
-                            position: 'start',
-                            yAdjust: -7
-                        }
-                    }
-                ]);
+                moonIconPositions.push({ x: moonIdx, y: suggestedMax });
             }
         }
     }
@@ -282,8 +244,8 @@ export async function renderWaterHoogteGraph(rows) {
                                 }
                             }
                         ])),
-                        ...Object.fromEntries(sunAnnotations),
-                        ...Object.fromEntries(moonAnnotations),
+                        // ...Object.fromEntries(sunAnnotations),
+                        // ...Object.fromEntries(moonAnnotations),
                     }
                 }
             },
@@ -329,6 +291,60 @@ export async function renderWaterHoogteGraph(rows) {
                     ctx.fillStyle = 'rgba(173, 216, 230, 1)'; // match the fill color
                     ctx.fillRect(0, 0, chart.width, chart.height);
                     ctx.restore();
+                }
+            },
+            {
+                id: 'sunMoonIcons',
+                afterDatasetsDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    const xScale = chart.scales.x;
+                    const yScale = chart.scales.y;
+                    if (!xScale || !yScale) return;
+                    // Draw sun icons
+                    sunIconPositions.forEach(pos => {
+                        const x = xScale.getPixelForValue(pos.x);
+                        const y = yScale.getPixelForValue(pos.y) + 10; // lower icon
+                        ctx.save();
+                        ctx.translate(x, y);
+                        ctx.scale(1.2, 1.2); // scale for visibility
+                        ctx.beginPath();
+                        // Material sun icon SVG path (simplified)
+                        ctx.arc(0, 0, 7, 0, 2 * Math.PI, false); // center circle
+                        ctx.fillStyle = '#ffcc00';
+                        ctx.shadowColor = '#ffcc00';
+                        ctx.shadowBlur = 2;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                        ctx.strokeStyle = '#ffcc00';
+                        for (let i = 0; i < 8; i++) {
+                            ctx.save();
+                            ctx.rotate((i * Math.PI) / 4);
+                            ctx.beginPath();
+                            ctx.moveTo(0, -10);
+                            ctx.lineTo(0, -14);
+                            ctx.stroke();
+                            ctx.restore();
+                        }
+                        ctx.restore();
+                    });
+                    // Draw moon icons
+                    moonIconPositions.forEach(pos => {
+                        const x = xScale.getPixelForValue(pos.x);
+                        const y = yScale.getPixelForValue(pos.y) + 10; // lower icon
+                        ctx.save();
+                        ctx.translate(x, y);
+                        ctx.scale(1.1, 1.1); // scale for visibility
+                        ctx.beginPath();
+                        // Material moon icon SVG path (simplified crescent)
+                        ctx.arc(0, 0, 7, Math.PI * 0.3, Math.PI * 1.7, false);
+                        ctx.arc(2.5, 0, 6, Math.PI * 1.5, Math.PI * 0.5, true);
+                        ctx.closePath();
+                        ctx.fillStyle = '#ffcc00';
+                        ctx.shadowColor = '#ffcc00';
+                        ctx.shadowBlur = 2;
+                        ctx.fill();
+                        ctx.restore();
+                    });
                 }
             }
         ]
