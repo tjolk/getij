@@ -5,7 +5,7 @@ export function appendTideCards(metingen, container, colorMap, highlightNextTide
     metingen.forEach((meting, idx) => {
         const card = document.createElement("div");
         let highlightClass = (highlightNextTide && idx === nextTideIndex) ? "next-tide" : "";
-        card.className = `tide-card ${colorMap[meting.kleur]} ${highlightClass}`;
+        card.className = `card tide-card ${colorMap[meting.kleur]} ${highlightClass}`;
         card.innerHTML = `<p class="tijd">${meting.tijd}</p> <p>${meting.hoogte}</p>`;
         container.appendChild(card);
     });
@@ -136,4 +136,46 @@ export function renderAstronomyTable(astronomyData, containerId) {
     html += '</tbody></table>';
     const container = document.getElementById(containerId);
     if (container) container.innerHTML = html;
+}
+
+export function renderSunriseSunsetCard(astronomyData) {
+    const today = new Date().toISOString().slice(0, 10);
+    const astro = astronomyData[today]?.astronomy;
+    if (!astro) return;
+    // Place sun-moon card as sibling to day card inside tides-container
+    const tidesContainer = document.querySelector('.tides-container');
+    if (!tidesContainer) return;
+    // Remove any existing sun-moon card
+    let oldCard = tidesContainer.querySelector('.sun-moon-card');
+    if (oldCard) oldCard.remove();
+    // Create sun-moon card
+    const sunMoonCard = document.createElement('div');
+    sunMoonCard.className = 'card sun-moon-card';
+    sunMoonCard.innerHTML = `
+        <div class="sun-moon-grid">
+          <div class="sun-moon-grid-item">
+            <span class="material-icons" style="color:#ffcc00;vertical-align:middle;">wb_sunny</span>
+            <span>Opkomst: <b>${astro.sunrise}</b></span>
+          </div>
+          <div class="sun-moon-grid-item">
+            <span class="material-icons" style="color:#ffcc00;vertical-align:middle;">wb_sunny</span>
+            <span>Ondergang: <b>${astro.sunset}</b></span>
+          </div>
+          <div class="sun-moon-grid-item">
+            <span class="material-icons" style="color:#b3b3ff;vertical-align:middle;">dark_mode</span>
+            <span>Opkomst: <b>${astro.moonrise}</b></span>
+          </div>
+          <div class="sun-moon-grid-item">
+            <span class="material-icons" style="color:#b3b3ff;vertical-align:middle;">dark_mode</span>
+            <span>Ondergang: <b>${astro.moonset}</b></span>
+          </div>
+        </div>
+    `;
+    // Insert after the day card if present, else at the top
+    const dayCard = tidesContainer.querySelector('#tides-day-card');
+    if (dayCard && dayCard.nextSibling) {
+        tidesContainer.insertBefore(sunMoonCard, dayCard.nextSibling);
+    } else {
+        tidesContainer.insertBefore(sunMoonCard, tidesContainer.firstChild);
+    }
 }
