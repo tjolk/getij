@@ -1,7 +1,24 @@
 /* styles.css */
+:root {
+  --color-primary: #005f9e;
+  --color-primary-light: #e6f0fa;
+  --color-accent: #ffcc00;
+  --color-darkblue: darkblue;
+  --color-lightblue: lightblue;
+  --color-gray-dark: #555;
+  --color-gray-light: #bbb;
+  --color-white: #fff;
+  --color-black: #000;
+  --color-red: red;
+  --color-blue: blue;
+  --color-bg-mobile: #b3cce6;
+  --color-text-light: #f0f0f0;
+  --color-card-bg: #666;
+}
+
 body {
     font-family: Arial, sans-serif;
-    background-color: #e6f0fa;
+    background-color: var(--color-primary-light);
 }
 
 .pijl {
@@ -10,18 +27,18 @@ body {
 }
 
 .omhoog {
-    color: blue; /* Blauwe pijl omhoog */
+    color: var(--color-blue); /* Blauwe pijl omhoog */
 }
 
 .omlaag {
-    color: red; /* Rode pijl omlaag */
+    color: var(--color-red); /* Rode pijl omlaag */
 }
 .pijl.omhoog {
-    color: blue !important;
+    color: var(--color-blue) !important;
 }
 
 .pijl.omlaag {
-    color: red !important;
+    color: var(--color-red) !important;
 }
 
 .container {
@@ -33,11 +50,12 @@ body {
 /* Zorg dat de afbeelding zich automatisch aanpast */
 .afbeelding {
     height: auto;
+    max-width: 100%;
 }
 
 .card {
-    background-color: #005f9e;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-white);
     padding: 20px;
     border-radius: 12px;
     text-align: center;
@@ -73,10 +91,10 @@ body {
     box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
 }
 
-.tide-card.darkblue { background-color: darkblue; color: white; }
-.tide-card.lightblue { background-color: lightblue; color: black; }
-.tide-card.gray-dark { background-color: #555; color: white; }
-.tide-card.gray-light { background-color: #bbb; color: black; }
+.tide-card.darkblue { background-color: var(--color-darkblue); color: var(--color-white); }
+.tide-card.lightblue { background-color: var(--color-lightblue); color: var(--color-black); }
+.tide-card.gray-dark { background-color: var(--color-gray-dark); color: var(--color-white); }
+.tide-card.gray-light { background-color: var(--color-gray-light); color: var(--color-black); }
 
 .tijd {
     font-size: 1.5em;
@@ -84,8 +102,8 @@ body {
 }
 
 .tomorrow-card {
-    background-color: #666;
-    color: white;
+    background-color: var(--color-card-bg);
+    color: var(--color-white);
     padding: 20px;
     border-radius: 12px;
     text-align: center;
@@ -97,7 +115,7 @@ body {
     font-size: 2em;
     margin-top: 5px;
     margin-bottom: 15px;
-    color: #f0f0f0;
+    color: var(--color-text-light);
 }
 
 .tides-container {
@@ -124,7 +142,7 @@ body {
   width: 100%;
 }
 
-@media screen and (max-width: 768px), (max-width: 768px) {
+@media screen and (max-width: 768px) {
     .tides-container {
         flex-direction: column;
         align-items: center;
@@ -154,30 +172,34 @@ body {
         border-radius: 12px;
     }
     .sun-moon-card .sun-moon-grid {
-      font-size: 1em;
-      padding: 0 !important;
+      font-size: 0.9em;
       text-wrap: nowrap;    
     }
-    .sun-moon-card {
-        padding: 0 !important;
-    }
     html, body {
-        background-color: #b3cce6 !important;
-        color: #f0f0f0 !important;
+        background-color: var(--color-bg-mobile) !important;
+        color: var(--color-text-light) !important;
     }
     .responsive-canvas-container {
         max-width: 95vw;
         min-width: unset;
     }
+    .responsive-canvas-container canvas {
+        height: 40vw !important;
+        min-height: 180px;
+        max-height: 320px;
+    }
 }
 
-.tide-card * {
+.tide-card h1,
+.tide-card h2,
+.tide-card h3,
+.tide-card p {
     margin: 0;
 }
 
 .next-tide {
-    outline: 3px solid #ffcc00;
-    box-shadow: 0 0 12px 2px #ffcc00;
+    outline: 3px solid var(--color-accent);
+    box-shadow: 0 0 12px 2px var(--color-accent);
     z-index: 2;
     position: relative;
 }
@@ -202,7 +224,7 @@ body {
   border-radius: 12px;
 }
 
-@media screen and (max-width: 768px), (max-width: 768px) {
+@media screen and (max-width: 768px) {
     .responsive-canvas-container {
         max-width: 95vw;
         min-width: unset;
@@ -217,7 +239,7 @@ body {
 h1 {
   font-size: 2.4rem;
   font-weight: 800;
-  color: #005f9e;
+  color: var(--color-primary);
   text-align: center;
   margin-top: 24px;
   margin-bottom: 8px;
@@ -232,12 +254,12 @@ h1::after {
   width: 95vw;
   height: 4px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #005f9e 30%, #ffcc00 100%);
+  background: linear-gradient(90deg, var(--color-primary) 30%, var(--color-accent) 100%);
 }
 h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #005f9e;
+  color: var(--color-primary);
   text-align: center;
   margin-top: 0;
   margin-bottom: 20px;
