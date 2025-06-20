@@ -3,59 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Getij Scheveningen</title>
+    <title>Getijden Scheveningen</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" href="icons/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icons/android-chrome-512x512.png">
     <link rel="manifest" href="site.webmanifest">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-    <h1>Getijdeninformatie voor Scheveningen</h1>
-<br>
+    <h1>Scheveningen</h1>
 <h2>Getijden</h2>
-<div class="tides-container">
-    <div id="tides-day-card" class="day-card">
-        <h3 id="day-title">Getijden van vandaag</h3>
-        <div id="tides-card-container" class="grid-container"></div>
+    <div class="responsive-canvas-container">
+      <canvas id="waterhoogte-graph"></canvas>
     </div>
-
-    <div id="tides-tomorrow-card" class="day-card tomorrow-card">
-        <h3 id="tomorrow-title">Getijden van morgen</h3>
-        <div id="tides-tomorrow-container" class="grid-container"></div>
+    <div class="day-container">
+        <div id="day-card" class="card day-card">
+            <h3 id="day-title">Getijden vandaag</h3>
+            <div id="tides-container" class="tides-container"></div>
+        </div>
+        <div id="tomorrow-card" class="card day-card tomorrow-card">
+            <h3 id="tomorrow-title">Getijden morgen</h3>
+            <div id="tides-tomorrow-container" class="tides-container"></div>
+        </div>
     </div>
-</div>
-<br>	
-<h2>Getijden vandaag</h2>
-<div class="getijden-container">
-<table id="daily-tides">
-    <thead>
-        <tr>
-            <th>Getij</th>
-            <th>Tijd</th>
-            <th>Waterhoogte</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Dynamically filled by JS -->
-    </tbody>
-</table>
-<br>
-<table>
-    <thead>
-        <tr>
-            <th>Datum</th>
-            <th>Tijd</th>
-            <th>Getijde</th>
-            <th>Hoogte</th>
-        </tr>
-    </thead>
-    <tbody id="tides-table">
-    </tbody>
-</table>
-    </div>
-<img src="images/waarschuwingsvlaggen.png" alt="Waarschuwingsvlaggen op het strand" class="afbeelding">
-    <script src="js/script.js"></script>
+    <img src="images/waarschuwingsvlaggen.png" alt="Waarschuwingsvlaggen op het strand" class="afbeelding vlaggen-afstand">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+    <script type="module" src="js/script.js"></script>
 </body>
 </html>

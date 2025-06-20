@@ -1,42 +1,44 @@
 /* styles.css */
+:root {
+  --color-primary: #005f9e;
+  --color-primary-light: #e6f0fa;
+  --color-accent: #ffcc00;
+  --color-darkblue: darkblue;
+  --color-lightblue: lightblue;
+  --color-gray-dark: #555;
+  --color-gray-light: #bbb;
+  --color-white: #fff;
+  --color-black: #000;
+  --color-red: red;
+  --color-blue: blue;
+  --color-bg-mobile: #b3cce6;
+  --color-text-light: #f0f0f0;
+  --color-card-bg: #666;
+}
+
 body {
     font-family: Arial, sans-serif;
-    background-color: #ffffff;
+    background-color: var(--color-primary-light);
 }
-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed; /* Voorkomt afbreken en zorgt voor nette kolommen */
-    word-wrap: break-word;
-}
-th, td {
-    padding: 10px;
-    text-align: left;
-    white-space: nowrap; /* Voorkomt afbreken van tekst */
-    overflow: hidden;
-/*     text-overflow: ellipsis; /* Voegt "..." toe als de tekst te lang is */
-}
-th {
-	background-color: #f4f4f4;
-}
+
 .pijl {
-    font-size: 16px;
+    font-size: 2em;
     font-weight: bold;
 }
 
 .omhoog {
-    color: blue; /* Blauwe pijl omhoog */
+    color: var(--color-blue); /* Blauwe pijl omhoog */
 }
 
 .omlaag {
-    color: red; /* Rode pijl omlaag */
+    color: var(--color-red); /* Rode pijl omlaag */
 }
 .pijl.omhoog {
-    color: blue !important;
+    color: var(--color-blue) !important;
 }
 
 .pijl.omlaag {
-    color: red !important;
+    color: var(--color-red) !important;
 }
 
 .container {
@@ -47,116 +49,231 @@ th {
 
 /* Zorg dat de afbeelding zich automatisch aanpast */
 .afbeelding {
-/*    max-width: 300px;*/
     height: auto;
+    max-width: 100%;
 }
 
-.day-card {
-    background-color: #005f9e;
-    color: white;
-    padding: 20px;
+.card,
+.tide-card,
+.tomorrow-card {
+    box-sizing: border-box;
     border-radius: 12px;
-    text-align: center;
     width: 100%;
-    max-width: 450px;
-    margin: auto;
+}
+
+.card {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 20px;
+    text-align: center;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    flex: 1;
+    font-size: 1.2em;
+    margin-bottom: 0;
 }
 
-.day-card h3 {
-    font-size: 24px;
+.day-card h3, .sun-moon-card h3 {
+    font-size: 2em;
     margin-top: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
-.grid-container {
+.tides-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 15px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
     justify-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+    .tides-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
 }
 
 .tide-card {
-    width: 100%;
-    max-width: 180px;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    font-size: 18px;
-    box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+    max-width: unset;
+    min-width: 0;
 }
 
-.tide-card.darkblue { background-color: darkblue; color: white; }
-.tide-card.lightblue { background-color: lightblue; color: black; }
+.tide-card.darkblue { background-color: var(--color-darkblue); color: var(--color-white); }
+.tide-card.lightblue { background-color: var(--color-lightblue); color: var(--color-black); }
+.tide-card.gray-dark { background-color: var(--color-gray-dark); color: var(--color-white); }
+.tide-card.gray-light { background-color: var(--color-gray-light); color: var(--color-black); }
 
 .tijd {
-    font-size: 30px;
+    font-size: 1.5em;
     font-weight: bold;
-    margin-bottom: 2px;
 }
 
 .tomorrow-card {
-    background-color: #666; /* Grijstint */
-    color: white;
+    background-color: var(--color-card-bg);
+    color: var(--color-white);
     padding: 20px;
-    border-radius: 12px;
     text-align: center;
-    width: 100%;
-    max-width: 450px;
-    margin: auto;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
 .tomorrow-card h3 {
-    font-size: 24px;
+    font-size: 2em;
     margin-top: 5px;
     margin-bottom: 15px;
-    color: #f0f0f0; /* Lichtere tekstkleur */
+    color: var(--color-text-light);
 }
 
-.tide-card.gray-dark { background-color: #555; color: white; }
-.tide-card.gray-light { background-color: #bbb; color: black; }
-
-.tides-container {
-    display: flex;
-    flex-wrap: wrap; /* Laat de kaarten verspringen als er te weinig ruimte is */
-    justify-content: center; /* Zorgt voor nette uitlijning */
-    gap: 20px; /* Ruimte tussen de kaarten */
+.day-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: grid-template-columns 0.2s;
 }
 
-.day-card {
-    flex: 1; /* Zorgt dat beide kaarten gelijke ruimte krijgen */
-    max-width: 450px; /* Voorkomt dat ze te groot worden */
+@media screen and (min-width: 1400px) {
+    .day-container {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
+.sun-moon-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding-top: 4vw;
+  align-items: center;
+  justify-content: space-between;
+}
 
-/* Zorg ervoor dat beide kaarten goed passen op mobiel */
+.sun-moon-item {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  justify-content: center;
+  width: auto;
+}
+
 @media screen and (max-width: 768px) {
+    .day-container {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    .card {
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+        padding: 3vw;
+    }
     .tides-container {
-        flex-direction: column; /* Zet de kaarten onder elkaar */
-        align-items: center; /* Zorg dat ze gecentreerd blijven */
+        gap: 15px;
     }
-    .day-card {
-        max-width: 90%;
-        padding: 15px;
-    }
-
-    .grid-container {
-        gap: 10px;
-    }
-
     .tide-card {
-        max-width: 140px;
-        font-size: 16px;
+        width: 100%;
+        max-width: unset;
+        font-size: 1em;
+        box-sizing: border-box;
     }
-
-    .container {
-        flex-direction: column; /* Zet afbeelding onder de tabel */
-        align-items: flex-start;
-    }
-
     .afbeelding {
-        max-width: 100%; /* Volledige breedte op kleinere schermen */
+        max-width: 95vw;
     }
+    html, body {
+        background-color: var(--color-bg-mobile) !important;
+        color: var(--color-text-light) !important;
+        overflow-x: hidden;
+    }
+    .responsive-canvas-container {
+        width: 100%;
+        max-width: 95vw;
+        min-width: unset;
+        box-sizing: border-box;
+    }
+    .responsive-canvas-container canvas {
+        width: 100%;
+        max-width: 95vw;
+        height: auto !important;
+        display: block;
+    }
+}
+
+.tide-card h1,
+.tide-card h2,
+.tide-card h3,
+.tide-card p {
+    margin: 0;
+}
+
+.next-tide {
+    outline: 3px solid var(--color-accent);
+    box-shadow: 0 0 12px 2px var(--color-accent);
+    z-index: 2;
+    position: relative;
+}
+
+.responsive-canvas-container,
+.responsive-canvas-container canvas,
+.afbeelding {
+    border-radius: 12px;
+}
+
+.responsive-canvas-container {
+    max-width: 700px;
+    min-width: 320px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.responsive-canvas-container canvas {
+    width: 100% !important;
+    display: block;
+    border-radius: 12px;
+}
+
+h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    text-align: center;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0,95,158,0.08);
+    position: relative;
+}
+h1::after {
+    content: "";
+    display: block;
+    margin: 0 auto;
+    width: 95vw;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--color-primary) 30%, var(--color-accent) 100%);
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 4px rgba(0,95,158,0.06);
+}
+
+.vlaggen-afstand {
+    margin-top: 32px;
 }

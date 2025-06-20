@@ -1,0 +1,107 @@
+[
+    {
+        "name": "getijExtremenScheveningenData",
+        "endpoint": "https://rws-proxy.onrender.com/api/ONLINEWAARNEMINGENSERVICES_DBO/OphalenWaarnemingen",
+        "begindatum": {
+            "format": "Y-m-d\\TH:i:s.000+01:00",
+            "relative": "-1 day 18:00"
+        },
+        "einddatum": {
+            "format": "Y-m-d\\TH:i:s.000+01:00",
+            "relative": "+4 days 00:00"
+        },
+        "body": {
+            "Locatie": {
+                "Code": "SCHEVNGN",
+                "X": 586550.994420996,
+                "Y": 5772806.43069697
+            },
+            "AquoPlusWaarnemingMetadata": {
+                "AquoMetadata": {
+                    "Groepering": {
+                        "Code": "GETETBRKD2"
+                    }
+                }
+            },
+            "Periode": {
+                "Begindatumtijd": "{BEGINDATUM}",
+                "Einddatumtijd": "{EINDDATUM}"
+            }
+        }
+    },
+    {
+        "name": "waterHoogteScheveningenData",
+        "endpoint": "https://rws-proxy.onrender.com/api/ONLINEWAARNEMINGENSERVICES_DBO/OphalenWaarnemingen",
+        "begindatum": {
+            "format": "Y-m-d\\TH:i:s.000+01:00",
+            "relative": "-1 days 00:00"
+        },
+        "einddatum": {
+            "format": "Y-m-d\\TH:i:s.000+01:00",
+            "relative": "+4 days 12:00"
+        },
+        "body": {
+            "Locatie": {
+                "Code": "SCHE",
+                "X": 586551.020314752,
+                "Y": 5772806.49292637
+            },
+            "AquoPlusWaarnemingMetadata": {
+                "AquoMetadata": {
+                    "Compartiment": {
+                        "Code": "OW"
+                    },
+                    "Grootheid": {
+                        "Code": "WATHTE"
+                    }
+                }
+            },
+            "Periode": {
+                "Begindatumtijd": "{BEGINDATUM}",
+                "Einddatumtijd": "{EINDDATUM}"
+            }
+        }
+    },
+    {
+        "name": "waterHoogteVerwachtScheveningenData",
+        "endpoint": "https://rws-proxy.onrender.com/api/ONLINEWAARNEMINGENSERVICES_DBO/OphalenWaarnemingen",
+        "begindatum": {
+            "format": "Y-m-d\\TH:i:s.000+01:00",
+            "relative": "-1 days 00:00"
+        },
+        "einddatum": {
+            "format": "Y-m-d\\TH:i:s.000+01:00",
+            "relative": "+4 days 12:00"
+        },
+        "body": {
+            "Locatie": {
+                "Code": "SCHE",
+                "X": 586551.020314752,
+                "Y": 5772806.49292637
+            },
+            "AquoPlusWaarnemingMetadata": {
+                "AquoMetadata": {
+                    "Compartiment": {
+                        "Code": "OW"
+                    },
+                    "Grootheid": {
+                        "Code": "WATHTEVERWACHT"
+                    }
+                }
+            },
+            "Periode": {
+                "Begindatumtijd": "{BEGINDATUM}",
+                "Einddatumtijd": "{EINDDATUM}"
+            }
+        }
+    },
+    {
+        "name": "ipgeolocationAstronomy",
+        "endpoint": "https://api.ipgeolocation.io/v2/astronomy",
+        "apiKeyFile": "config/ipgeolocation.key",
+        "lat": 52.1,
+        "long": 4.26,
+        "days": 7,
+        "daysOffset": -3
+    }
+]

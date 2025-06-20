@@ -1,23 +1,8 @@
-# Ignore sensitive config
-config_getij.php
+# Ignore all files in the data directory
+/data/*
+/config/ipgeolocation.key
+# But do not ignore the log file if you want to keep it tracked (uncomment if needed)
+#!/data/update.log
 
-# Ignore data files that may contain generated or sensitive data
-data/*.json
-data/*.log
-
-# Ignore OS and editor files
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-
-# Ignore node_modules and vendor (if ever used)
-node_modules/
-vendor/
-
-# Ignore log files
-*.log
-
-# Ignore environment files
-.env
-.env.*
+# If you want to keep the directory itself
+!.gitkeep

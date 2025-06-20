@@ -5,7 +5,7 @@ Getij is a web application that displays tide information, warnings, and brandin
 ## Features
 
 - Interactive tide charts and data visualization
-- Real-time tide data updates (via `php/updateTideData.php` and `data/tideData.json`)
+- Real-time tide data updates (via `php/updateData.php` and `data/getijExtremenScheveningenData.json`)
 - Visual warning flags for hazardous conditions
 - Responsive design for mobile and desktop
 - Custom branding and icons
@@ -15,8 +15,8 @@ Getij is a web application that displays tide information, warnings, and brandin
 - `index.html` – Main web page
 - `css/styles.css` – Stylesheet for the site
 - `js/script.js` – Main JavaScript logic
-- `data/tideData.json` – Tide data (auto-updated)
-- `php/updateTideData.php` – Script to update tide data
+- `data/getijExtremenScheveningenData.json` – Tide data (auto-updated)
+- `php/updateData.php` – Script to update tide data
 - `images/` – Branding and informational images
 - `icons/` – App and favicon icons
 
