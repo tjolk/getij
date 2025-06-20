@@ -12,11 +12,11 @@ export function appendTideCards(metingen, container, colorMap, highlightNextTide
 }
 
 export function displayTides(data) {
-    const dayCard = document.getElementById("tides-day-card");
+    const dayCard = document.getElementById("day-card");
     const dayTitle = document.getElementById("day-title");
-    const cardContainer = document.getElementById("tides-card-container");
+    const cardContainer = document.getElementById("tides-container");
 
-    const tomorrowCard = document.getElementById("tides-tomorrow-card");
+    const tomorrowCard = document.getElementById("tomorrow-card");
     const tomorrowTitle = document.getElementById("tomorrow-title");
     const tomorrowContainer = document.getElementById("tides-tomorrow-container");
 
@@ -139,81 +139,78 @@ export function renderAstronomyTable(astronomyData, containerId) {
 }
 
 export function renderSunriseSunsetCard(astronomyData) {
-    const today = new Date().toISOString().slice(0, 10);
-    const astro = astronomyData[today]?.astronomy;
-    if (!astro) return;
-    const tidesContainer = document.querySelector('.tides-container');
-    if (!tidesContainer) return;
-    let oldCard = tidesContainer.querySelector('.sun-moon-card');
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const todayStr = today.toISOString().slice(0, 10);
+    const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+    const astroToday = astronomyData[todayStr]?.astronomy;
+    const astroTomorrow = astronomyData[tomorrowStr]?.astronomy;
+    const dayContainer = document.querySelector('.day-container');
+    if (!dayContainer) return;
+    let oldCard = dayContainer.querySelector('.sun-moon-card');
     if (oldCard) oldCard.remove();
 
-    // Collect events with time and label
-    let events = [];
-    if (astro.sunrise && astro.sunrise !== "-:-") {
-        events.push({
-            type: 'sun',
-            label: `Opkomst: <b>${astro.sunrise}</b>`,
-            icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;color:#ffcc00;">
-                <circle cx="12" cy="12" r="4" fill="currentColor"/>
-                <rect x="11.5" y="1" width="1" height="4" rx="0.5" fill="currentColor"/>
-                <rect x="11.5" y="19" width="1" height="4" rx="0.5" fill="currentColor"/>
-                <rect x="1" y="11.5" width="4" height="1" rx="0.5" fill="currentColor"/>
-                <rect x="19" y="11.5" width="4" height="1" rx="0.5" fill="currentColor"/>
-                <rect x="4.22" y="4.22" width="1" height="4" rx="0.5" transform="rotate(-45 4.22 4.22)" fill="currentColor"/>
-                <rect x="18.78" y="4.22" width="1" height="4" rx="0.5" transform="rotate(45 18.78 4.22)" fill="currentColor"/>
-                <rect x="4.22" y="18.78" width="1" height="4" rx="0.5" transform="rotate(-135 4.22 18.78)" fill="currentColor"/>
-                <rect x="18.78" y="18.78" width="1" height="4" rx="0.5" transform="rotate(135 18.78 18.78)" fill="currentColor"/>
-            </svg>`,
-            time: astro.sunrise
+    // Helper to build sun-moon grid HTML for a given astro object
+    function buildSunMoonGrid(astro) {
+        if (!astro) return '';
+        let events = [];
+        if (astro.sunrise && astro.sunrise !== "-:-") {
+            events.push({
+                type: 'sun',
+                label: `<b>${astro.sunrise}</b>`,
+                icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="#ffcc00"><circle cx="12" cy="12" r="5" /><g stroke-width="2" stroke-linecap="round" stroke="#ffcc00"><line x1="12" y1="5" x2="12" y2="3" /><line x1="17" y1="7" x2="18.4" y2="5.6"  stroke="none"/><line x1="19" y1="12" x2="21" y2="12" /><line x1="17" y1="17" x2="18.4" y2="18.4" /><line x1="12" y1="19" x2="12" y2="21" /><line x1="7" y1="17" x2="5.6" y2="18.4" /><line x1="5" y1="12" x2="3" y2="12" /><line x1="7" y1="7" x2="5.6" y2="5.6" /></g><polygon points="19,2 22,6 20,6 20,10 18,10 18,6 16,6" stroke="none"/></svg>`,
+                time: astro.sunrise
+            });
+        }
+        if (astro.sunset && astro.sunset !== "-:-") {
+            events.push({
+                type: 'sun',
+                label: `<b>${astro.sunset}</b>`,
+                icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="#ffcc00"><circle cx="12" cy="12" r="5" /><g stroke-width="2" stroke-linecap="round" stroke="#ffcc00"><line x1="12" y1="5" x2="12" y2="3" /><line x1="17" y1="7" x2="18.4" y2="5.6"  stroke="none"/><line x1="19" y1="12" x2="21" y2="12" /><line x1="17" y1="17" x2="18.4" y2="18.4" /><line x1="12" y1="19" x2="12" y2="21" /><line x1="7" y1="17" x2="5.6" y2="18.4" /><line x1="5" y1="12" x2="3" y2="12" /><line x1="7" y1="7" x2="5.6" y2="5.6" /></g><polygon points="19,10 22,6 20,6 20,2 18,2 18,6 16,6" stroke="none"/></svg>`,
+                time: astro.sunset
+            });
+        }
+        if (astro.moonrise && astro.moonrise !== "-:-") {
+            events.push({
+                type: 'moon',
+                label: `<b>${astro.moonrise}</b>`,
+                icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="#b3b3ff" style="vertical-align:middle;"><path d='M19 15A7 7 0 0 1 10 6 7 7 0 1 0 19 15Z'/><polygon points="15,4 18,8 16,8 16,12 14,12 14,8 12,8"/></svg>`,
+                time: astro.moonrise
+            });
+        }
+        if (astro.moonset && astro.moonset !== "-:-") {
+            events.push({
+                type: 'moon',
+                label: `<b>${astro.moonset}</b>`,
+                icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="#b3b3ff" style="vertical-align:middle;"><path d='M19 15A7 7 0 0 1 10 6 7 7 0 1 0 19 15Z'/><polygon points="15,12 18,8 16,8 16,4 14,4 14,8 12,8"/></svg>`,
+                time: astro.moonset
+            });
+        }
+        // Sort by time (HH:MM)
+        events.sort((a, b) => {
+            const d1 = new Date(`2000-01-01T${a.time}`);
+            const d2 = new Date(`2000-01-01T${b.time}`);
+            return d1 - d2;
         });
-    }
-    if (astro.sunset && astro.sunset !== "-:-") {
-        events.push({
-            type: 'sun',
-            label: `Ondergang: <b>${astro.sunset}</b>`,
-            icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;color:#ffcc00;"><circle cx="12" cy="16" r="4" fill="currentColor"/><rect x="11" y="18" width="2" height="4" rx="1" fill="currentColor"/><rect x="2.929" y="17.657" width="2" height="4" rx="1" transform="rotate(-45 2.929 17.657)" fill="currentColor"/><rect x="2" y="15" width="4" height="2" rx="1" fill="currentColor"/><rect x="18" y="15" width="4" height="2" rx="1" fill="currentColor"/><rect x="19.071" y="17.657" width="2" height="4" rx="1" transform="rotate(45 19.071 17.657)" fill="currentColor"/></svg>`,
-            time: astro.sunset
-        });
-    }
-    if (astro.moonrise && astro.moonrise !== "-:-") {
-        events.push({
-            type: 'moon',
-            label: `Opkomst: <b>${astro.moonrise}</b>`,
-            icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;color:#b3b3ff;"><path d='M17.5 15.5A7 7 0 0 1 8.5 6.5 7 7 0 1 0 17.5 15.5Z' fill="currentColor"/><polygon points="14,4 17,8 15,8 15,12 13,12 13,8 11,8" fill="#b3b3ff"/></svg>`,
-            time: astro.moonrise
-        });
-    }
-    if (astro.moonset && astro.moonset !== "-:-") {
-        events.push({
-            type: 'moon',
-            label: `Ondergang: <b>${astro.moonset}</b>`,
-            icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;color:#b3b3ff;"><path d='M6.5 8.5A7 7 0 0 0 15.5 17.5 7 7 0 1 1 6.5 8.5Z' fill="currentColor"/><polygon points="12,15 15,11 13,11 13,7 11,7 11,11 9,11" fill="#b3b3ff"/></svg>`,
-            time: astro.moonset
-        });
+        return `<div class="sun-moon-container">${events.map(ev => `<div class="sun-moon-item">${ev.icon}<span>${ev.label}</span></div>`).join('')}</div>`;
     }
 
-    // Sort by time (HH:MM)
-    events.sort((a, b) => {
-        // Parse as date objects for today
-        const d1 = new Date(`${today}T${a.time}`);
-        const d2 = new Date(`${today}T${b.time}`);
-        return d1 - d2;
-    });
-
-    // Build HTML
-    const gridHtml = events.map(ev =>
-        `<div class="sun-moon-grid-item">${ev.icon}<span>${ev.label}</span></div>`
-    ).join('');
-
-    const sunMoonCard = document.createElement('div');
-    sunMoonCard.className = 'card sun-moon-card';
-    sunMoonCard.innerHTML = `<div class="sun-moon-grid">${gridHtml}</div>`;
-
-    // Insert after the day card if present, else at the top
-    const dayCard = tidesContainer.querySelector('#tides-day-card');
-    if (dayCard && dayCard.nextSibling) {
-        tidesContainer.insertBefore(sunMoonCard, dayCard.nextSibling);
-    } else {
-        tidesContainer.insertBefore(sunMoonCard, tidesContainer.firstChild);
+    // Today
+    const dayCard = dayContainer.querySelector('#day-card');
+    if (dayCard) {
+        const oldGrid = dayCard.querySelector('.sun-moon-container');
+        if (oldGrid) oldGrid.remove();
+        dayCard.insertAdjacentHTML('beforeend', buildSunMoonGrid(astroToday));
+    }
+    // Tomorrow
+    const tomorrowCard = dayContainer.querySelector('#tomorrow-card');
+    if (tomorrowCard) {
+        const oldGrid = tomorrowCard.querySelector('.sun-moon-container');
+        if (oldGrid) oldGrid.remove();
+        tomorrowCard.insertAdjacentHTML('beforeend', buildSunMoonGrid(astroTomorrow));
     }
 }
+
+
+
