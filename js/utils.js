@@ -17,6 +17,18 @@ export function formatDateTime(isoString) {
 }
 
 /**
+ * Formats a Date as a local YYYY-MM-DD string (unlike toISOString, does not shift to UTC).
+ * @param {Date} date
+ * @returns {string}
+ */
+export function toLocalDateString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+/**
  * Checks if two dates are on the same calendar day.
  * @param {Date} date1
  * @param {Date} date2
