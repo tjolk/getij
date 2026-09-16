@@ -1,5 +1,5 @@
 // UI rendering logic for tide cards
-import { formatDateTime, isSameDay } from './utils.js';
+import { formatDateTime, isSameDay, toLocalDateString } from './utils.js';
 
 export function appendTideCards(metingen, container, colorMap, highlightNextTide = false, nextTideIndex = -1) {
     metingen.forEach((meting, idx) => {
@@ -48,40 +48,38 @@ export function displayTides(data) {
     if (dayTitle) dayTitle.textContent = `Vandaag ${vandaagDate.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}`;
     if (tomorrowTitle) tomorrowTitle.textContent = `Morgen ${morgenDate.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}`;
 
-    // Use the first WaarnemingLijst that contains at least one MetingenLijst item with Waarde_Numeriek
-    const waarneming = data.WaarnemingenLijst && data.WaarnemingenLijst.find(w =>
-        w.MetingenLijst && w.MetingenLijst.some(m => typeof m.Meetwaarde.Waarde_Numeriek === "number")
-    );
-    if (!waarneming) return;
+    if (!data.WaarnemingenLijst.some(w => w.MetingenLijst?.some(m => typeof m.Meetwaarde.Waarde_Numeriek === "number"))) return;
 
-    waarneming.MetingenLijst.forEach(meting => {
-        if (typeof meting.Meetwaarde.Waarde_Numeriek === "number") {
-            const waardeNum = meting.Meetwaarde.Waarde_Numeriek;
-            const pijlHTML = waardeNum >= 0 ? "▲" : "▼";
-            const tijdInfo = formatDateTime(meting.Tijdstip);
-            const metingDate = new Date(meting.Tijdstip);
+    data.WaarnemingenLijst.forEach(waarneming => {
+        (waarneming.MetingenLijst || []).forEach(meting => {
+            if (typeof meting.Meetwaarde.Waarde_Numeriek === "number") {
+                const waardeNum = meting.Meetwaarde.Waarde_Numeriek;
+                const pijlHTML = waardeNum >= 0 ? "▲" : "▼";
+                const tijdInfo = formatDateTime(meting.Tijdstip);
+                const metingDate = new Date(meting.Tijdstip);
 
-            if (isSameDay(metingDate, vandaagDate)) {
-                metingenVandaag.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
-            } else if (isSameDay(metingDate, morgenDate)) {
-                metingenMorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
-            } else if (isSameDay(metingDate, overmorgenDate)) {
-                metingenOvermorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
+                if (isSameDay(metingDate, vandaagDate)) {
+                    metingenVandaag.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
+                } else if (isSameDay(metingDate, morgenDate)) {
+                    metingenMorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
+                } else if (isSameDay(metingDate, overmorgenDate)) {
+                    metingenOvermorgen.push({ tijd: tijdInfo.tijd, hoogte: `${pijlHTML} ${waardeNum} cm`, kleur: waardeNum >= 0 ? "darkblue" : "lightblue", tijdstip: meting.Tijdstip });
+                }
             }
-        }
+        });
     });
 
     metingenVandaag.sort((a, b) => new Date(a.tijdstip) - new Date(b.tijdstip));
     metingenMorgen.sort((a, b) => new Date(a.tijdstip) - new Date(b.tijdstip));
     metingenOvermorgen.sort((a, b) => new Date(a.tijdstip) - new Date(b.tijdstip));
 
-    // If only 3 tides today, add the first tide of tomorrow to today
+    // If only 3 tides today, move the first tide of tomorrow to today
     if (metingenVandaag.length === 3 && metingenMorgen.length > 0) {
-        metingenVandaag.push(metingenMorgen[0]);
+        metingenVandaag.push(metingenMorgen.shift());
     }
-    // If only 3 tides tomorrow, add the first tide of overmorgen to tomorrow
+    // If only 3 tides tomorrow, move the first tide of overmorgen to tomorrow
     if (metingenMorgen.length === 3 && metingenOvermorgen.length > 0) {
-        metingenMorgen.push(metingenOvermorgen[0]);
+        metingenMorgen.push(metingenOvermorgen.shift());
     }
 
     // --- NEW LOGIC: Find the single next tide across both today and tomorrow ---
@@ -142,8 +140,8 @@ export function renderSunriseSunsetCard(astronomyData) {
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-    const todayStr = today.toISOString().slice(0, 10);
-    const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+    const todayStr = toLocalDateString(today);
+    const tomorrowStr = toLocalDateString(tomorrow);
     const astroToday = astronomyData[todayStr]?.astronomy;
     const astroTomorrow = astronomyData[tomorrowStr]?.astronomy;
     const dayContainer = document.querySelector('.day-container');

@@ -4,16 +4,7 @@ import { getHighLowAnnotations, getSunMoonIconPositions } from './chart-annotati
 import { findClosestIndex, getYRangePadding } from './chart-utils.js';
 import { formatDateTime, movingAverage } from './utils.js';
 
-export async function renderWaterHoogteGraph(rows) {
-    // Fetch astronomy data for overlays
-    let astronomyData = {};
-    try {
-        const resp = await fetch('data/ipgeolocationAstronomy.json');
-        astronomyData = await resp.json();
-    } catch (e) {
-        astronomyData = {};
-    }
-
+export function renderWaterHoogteGraph(rows, astronomyData = {}) {
     const labels = rows.map(row => {
         const date = new Date(row.tijd);
         return date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
@@ -23,20 +14,12 @@ export async function renderWaterHoogteGraph(rows) {
     const smoothedData = movingAverage(data, 10);
 
     // Bepaal index van huidige tijd (dichtstbijzijnde punt)
-    const now = new Date();
-    let closestIdx = 0;
-    let minDiff = Infinity;
-    rows.forEach((row, i) => {
-        const diff = Math.abs(new Date(row.tijd) - now);
-        if (diff < minDiff) {
-            minDiff = diff;
-            closestIdx = i;
-        }
-    });
+    const closestIdx = findClosestIndex(rows, new Date());
     // Find highest and lowest points
     const values = rows.map(d => (d.gemeten != null) ? d.gemeten : (d.verwacht != null ? d.verwacht : null));
-    const maxValue = Math.max(...values);
-    const minValue = Math.min(...values);
+    const nonNullValues = values.filter(v => v !== null);
+    const maxValue = Math.max(...nonNullValues);
+    const minValue = Math.min(...nonNullValues);
     const maxIndex = values.indexOf(maxValue);
     const minIndex = values.indexOf(minValue);
     const maxLabel = rows[maxIndex].tijd;

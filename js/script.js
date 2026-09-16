@@ -18,20 +18,28 @@ async function displayTidesFromApi() {
     }
 }
 
-async function loadAndDisplayWaterHoogteGraph() {
+async function fetchAstronomyData() {
+    try {
+        const response = await fetch('data/ipgeolocationAstronomy.json');
+        return await response.json();
+    } catch (e) {
+        return {};
+    }
+}
+
+async function loadAndDisplayWaterHoogteGraph(astronomyData) {
     const rows = await fetchWaterHoogteData();
-    renderWaterHoogteGraph(rows);
+    renderWaterHoogteGraph(rows, astronomyData);
 }
 
-async function loadAndDisplayAstronomyTable() {
-    const response = await fetch('data/ipgeolocationAstronomy.json');
-    const data = await response.json();
-    renderAstronomyTable(data, 'astronomy-table-container');
-    renderSunriseSunsetCard(data);
+function displayAstronomyTable(astronomyData) {
+    renderAstronomyTable(astronomyData, 'astronomy-table-container');
+    renderSunriseSunsetCard(astronomyData);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     displayTidesFromApi();
-    loadAndDisplayWaterHoogteGraph();
-    loadAndDisplayAstronomyTable();
+    const astronomyData = await fetchAstronomyData();
+    loadAndDisplayWaterHoogteGraph(astronomyData);
+    displayAstronomyTable(astronomyData);
 });
