@@ -36,7 +36,7 @@ observation() {
     echo "--- number of series (WaarnemingenLijst): $(jq '.WaarnemingenLijst | length' "$OUT" 2>/dev/null)"
     jq -c '.WaarnemingenLijst[]? | {
         Locatie: .Locatie.Code,
-        ProcesType: .AquoMetadata.ProcesType.Code,
+        ProcesType: .AquoMetadata.ProcesType,
         Grootheid: .AquoMetadata.Grootheid.Code,
         Groepering: .AquoMetadata.Groepering.Code,
         Hoedanigheid: .AquoMetadata.Hoedanigheid.Code,
@@ -44,12 +44,12 @@ observation() {
         n: (.MetingenLijst | length),
         eerste: .MetingenLijst[0].Tijdstip,
         laatste: .MetingenLijst[-1].Tijdstip,
+        AquoKeys: (.AquoMetadata | keys),
         metingKeys: (.MetingenLijst[0] | keys),
         voorbeeldMeetwaarde: .MetingenLijst[0].Meetwaarde,
         voorbeeldMetadata: .MetingenLijst[0].WaarnemingMetadata
-      }' "$OUT" | head -c 3000
+      }' "$OUT" | head -c 4000
     echo
-    echo "--- raw start ---"; head -c 400 "$OUT"; echo
   else
     echo "--- raw (not JSON) ---"; head -c 600 "$OUT"; echo
   fi
