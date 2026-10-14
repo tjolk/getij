@@ -1,0 +1,22 @@
+name: RWS API test
+
+# Diagnostic only: probes the new Rijkswaterstaat WaterWebservices and prints the responses.
+on:
+  workflow_dispatch:
+  push:
+    branches: [claude/getij-website-data-issue-0r291n]
+    paths:
+      - scripts/rws-api-test.sh
+      - .github/workflows/rws-api-test.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe RWS API
+        run: ./scripts/rws-api-test.sh
